@@ -1,0 +1,10 @@
+citHeader("To cite BiplotML in publications use:")
+
+citEntry(
+  entry    = "Manual",
+  title    = "BiplotML: Biplots Estimation with Machine Learning Algorithms",
+  author   = "Babativa J.G",
+  year     = "2020",
+  url      = "https://github.com/jgbabativam/",
+textVersion = paste("Babativa, JG", "BiplotML: Biplots Estimation with Machine Learning Algorithms")
+)
