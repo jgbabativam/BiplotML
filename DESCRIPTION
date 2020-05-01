@@ -26,3 +26,5 @@ Suggests:
     testthat,
     knitr,
     rmarkdown
+URL: https://github.com/jgbabativam/BiplotML
+BugReports: https://github.com/jgbabativam/BiplotML/issues
