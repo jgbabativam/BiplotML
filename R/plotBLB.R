@@ -27,7 +27,7 @@
 #' data("Methylation")
 #' set.seed(123456)
 #'
-#' outBLB = bootBLB(x = Methylation, sup = TRUE, plot=FALSE)
+#' outBLB <- bootBLB(x = Methylation, sup = TRUE, plot=FALSE)
 #' plotBLB(x = outBLB, titles = "Methylation Logistic Biplot", ellipses = FALSE)
 #' plotBLB(x = outBLB, titles = "Methylation LogBiplot", endsegm = 0.95)
 #' plotBLB(x = outBLB, label.ind = TRUE, titles = "Methylation LogBiplot")
