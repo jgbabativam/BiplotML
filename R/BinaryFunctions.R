@@ -13,8 +13,6 @@
 #' @param par Parameters.
 #' @param k Dimensions number.
 #' @param lambda Penalization parameter.
-#' @param xs Input matrix supplematary individuals.
-#' @param B Resamples number.
 #' @param ... other arguments
 #' @export
 
@@ -44,7 +42,22 @@ J.BipLog.BIN <- function(xt, par, k, lambda, ...) {
     return(J)
 }
 
+#' @title
+#' Necessary functions for gradients
+#' @description
+#' These functions are necessary for the correct performance of the package.
+#' @return
+#' Output functions
+#' @details
+#' These functions are necessary for the correct performance of the package.
+#' @author Giovany Babativa <gbabativam@@gmail.com>
+#' @param xt Input matrix.
+#' @param par Parameters.
+#' @param k Dimensions number.
+#' @param lambda Penalization parameter.
+#' @param ... other arguments
 #' @export
+
 Grad.BipLog.BIN <- function(xt, par, k, lambda, ...) {
     x = as.matrix(xt)
     n = nrow(x)
@@ -66,6 +79,15 @@ Grad.BipLog.BIN <- function(xt, par, k, lambda, ...) {
     return(gradient)
 }
 
+#' @title
+#' Supplementary idividuals
+#' @param xs Input matrix supplematary individuals.
+#' @param B Resamples number.
+#' @param k Dimensions number.
+#' @param par Parameters.
+#' @param lambda Penalization parameter.
+#' @param ... other arguments
+
 #' @export
 Indsup.BIN <- function(xs, B, par, k, lambda, ...) {
     x = as.matrix(xs)
@@ -85,6 +107,14 @@ Indsup.BIN <- function(xs, B, par, k, lambda, ...) {
     return(L)
 }
 
+#' @title
+#' Gradient supplementary idividuals
+#' @param xs Input matrix supplematary individuals.
+#' @param B Resamples number.
+#' @param k Dimensions number.
+#' @param par Parameters.
+#' @param lambda Penalization parameter.
+#' @param ... other arguments
 #' @export
 Indsup.GradBIN <- function(xs, B, par, k, lambda, ...) {
     x = as.matrix(xs)

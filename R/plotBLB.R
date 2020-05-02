@@ -28,12 +28,12 @@
 #' set.seed(123456)
 #'
 #' outBLB = bootBLB(x = Methylation, sup = TRUE, plot=FALSE)
-#' plot.BLB(x = outBLB, titles = "Methylation Logistic Biplot")
-#' plot.BLB(x = outBLB, titles = "Methylation Logistic Biplot", ellipses = TRUE, endsegm = 0.95)
-#' plot.BLB(x = outBLB, label.ind = TRUE, titles = "Methylation Logistic Biplot", ellipses = TRUE, endsegm = 0.95)
+#' plotBLB(x = outBLB, titles = "Methylation Logistic Biplot", ellipses = FALSE)
+#' plotBLB(x = outBLB, titles = "Methylation LogBiplot", endsegm = 0.95)
+#' plotBLB(x = outBLB, label.ind = TRUE, titles = "Methylation LogBiplot")
 #' @export
 
-plot.BLB <- function(x, dim=c(1, 2), col.ind = "#E7B800", col.var="#00AFBB",
+plotBLB <- function(x, dim=c(1, 2), col.ind = "#E7B800", col.var="#00AFBB",
                      label.ind = FALSE, draw = c("biplot","ind","var"), titles = NULL,
                      ellipses = FALSE, endsegm = 0.75){
 

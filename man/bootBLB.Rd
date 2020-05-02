@@ -50,7 +50,7 @@ Fitting when sup=TRUE ... whereas sup=FALSE ...
 \examples{
 data("Methylation")
 set.seed(123456)
-out.sup <- bootBLB(x = Methylation, ellipses = TRUE)
+out.sup <- bootBLB(x = Methylation, ellipses = FALSE)
 out <- bootBLB(x = Methylation, sup = FALSE, ellipses = TRUE)
 }
 \references{
@@ -63,7 +63,7 @@ Milan, L., & Whittaker, J. (1995). Application of the parametric bootstrap to mo
 Vicente-Villardon, J.L. and Galindo, M. Purificacion (2006), \emph{Multiple Correspondence Analysis and related Methods. Chapter: Logistic Biplots}. Chapman-Hall
 }
 \seealso{
-\code{\link{plot.BLB}, \link{performanceBLB}}
+\code{\link{plotBLB}, \link{performanceBLB}}
 }
 \author{
 Giovany Babativa <gbabativam@gmail.com>

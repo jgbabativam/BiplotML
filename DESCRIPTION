@@ -1,6 +1,6 @@
 Package: BiplotML
 Title: Biplots Estimation with Algorithms ML 
-Version: 1.0.0
+Version: 0.0.1
 Date: 2020-04-30
 Authors@R:
     person(given = "Jose Giovany",
@@ -18,7 +18,7 @@ Depends:
     optimx,
     shapes
 Description: BiplotML is a package for creating graphics of Biplots, based on the machine learning algorithms.
-License: GPL (> = 2)
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.0

@@ -1,5 +1,8 @@
 #' @importFrom optimr optimr
 #' @importFrom shapes procOPA
+#' @importFrom stats runif
+#' @importFrom stats aggregate
+#' @importFrom stats quantile
 #' @import dplyr
 #' @export
 #'
@@ -30,11 +33,11 @@
 #' Milan, L., & Whittaker, J. (1995). Application of the parametric bootstrap to models that incorporate a singular value decomposition. Applied Statistics, 44, 31–49.
 #'
 #' Vicente-Villardon, J.L. and Galindo, M. Purificacion (2006), \emph{Multiple Correspondence Analysis and related Methods. Chapter: Logistic Biplots}. Chapman-Hall
-#' @seealso \code{\link{plot.BLB}, \link{performanceBLB}}
+#' @seealso \code{\link{plotBLB}, \link{performanceBLB}}
 #' @examples
 #' data("Methylation")
 #' set.seed(123456)
-#' out.sup <- bootBLB(x = Methylation, ellipses = TRUE)
+#' out.sup <- bootBLB(x = Methylation, ellipses = FALSE)
 #' out <- bootBLB(x = Methylation, sup = FALSE, ellipses = TRUE)
 
 bootBLB <- function(x, k=2, L=0, method="CG", plot=TRUE, sup=TRUE,
@@ -219,7 +222,7 @@ bootBLB <- function(x, k=2, L=0, method="CG", plot=TRUE, sup=TRUE,
   }
 
   if (plot & ncol(Ahat)>1) {
-    print(plot.BLB(x=out, ellipses = ellipses, endsegm = 0.95))
+    print(plotBLB(x=out, ellipses = ellipses, endsegm = 0.95))
   }
 
   class(out) <- c("BiplotML", "list")
