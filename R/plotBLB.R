@@ -14,23 +14,25 @@
 #' @param dim Dimensions plot. By default \code{Dim1} and \code{Dim2}.
 #' @param col.ind Color for the individuals.
 #' @param col.var Color for the variables.
-#' @param label.ind By default the row points are labelled.
+#' @param label.ind By default the row points are not labelled.
 #' @param draw The graph to draw ("ind" for the individuals, "var" for the variables and "biplot" for the row and columns coordinates in the same graph)
 #' @param titles Title for the Biplot
 #' @param ellipses If \code{ellipses=TRUE}, draw confidence ellipses around the rows.
 #' @param endsegm Represents where the segment of a variable ends on the logit probability scale. By default \code{endsegm=0.75}
 #' @references
 #' Meulman, J. J., & Heiser, W. J. (1983). The display of bootstrap solutions in multidimensional scaling. Murray Hill, NJ: Bell Laboratories. (Technical memorandum)
+#'
 #' Vicente-Villardon, J.L. and Galindo, M. Purificacion (2006), \emph{Multiple Correspondence Analysis and related Methods. Chapter: Logistic Biplots}. Chapman-Hall
 #' @seealso \code{\link{bootBLB}}
 #' @examples
+#' \dontrun{
 #' data("Methylation")
 #' set.seed(123456)
-#'
 #' outBLB <- bootBLB(x = Methylation, sup = TRUE, plot=FALSE)
 #' plotBLB(x = outBLB, titles = "Methylation Logistic Biplot", ellipses = FALSE)
 #' plotBLB(x = outBLB, titles = "Methylation LogBiplot", endsegm = 0.95)
 #' plotBLB(x = outBLB, label.ind = TRUE, titles = "Methylation LogBiplot")
+#' }
 #' @export
 
 plotBLB <- function(x, dim=c(1, 2), col.ind = "#E7B800", col.var="#00AFBB",
@@ -145,5 +147,6 @@ plotBLB <- function(x, dim=c(1, 2), col.ind = "#E7B800", col.var="#00AFBB",
     g <- g +
       geom_point(data=x$Ellip, aes(x=Dimb1, y=Dimb2, group=ind), size=0.001, colour="lightgray", shape=20)
   }
+
   return(g)
 }

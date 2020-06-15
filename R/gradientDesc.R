@@ -15,16 +15,19 @@
 #' @param rate The value of the rate of descent \eqn{\alpha} in the algorithm of descending gradient. By default \eqn{\alpha = 0.001}.
 #' @param converg Tolerance limit to achieve convergence. By default \code{converg = 0.001}
 #' @param max_iter Maximum iterations number.
-#'
+#' @param plot Plot the Logistic Biplot.
+#' @param ... other arguments
 #' @references
 #' Vicente-Villardon, J.L. and Galindo, M. Purificacion (2006), \emph{Multiple Correspondence Analysis and related Methods. Chapter: Logistic Biplots}. Chapman-Hall
-#' @seealso \code{\link{J.BipLog.BIN}}
+#' @seealso \code{\link{plotBLB}, \link{performanceBLB}}
 #' @examples
 #' data('Methylation')
-#' set.seed(123456)
-#' outGD <- gradientDesc(x = Methylation, k=2, rate = 0.001, converg=0.001, max_iter=10000)
+#' set.seed(02052020)
+#' MatGD <- gradientDesc(x = Methylation, k=2, max_iter=10000)
+#' outGD <- gradientDesc(x = Methylation, k=2, max_iter=10000, plot = TRUE)
 
-gradientDesc <- function(x, k = 2, rate = 0.001, converg = 0.001, max_iter) {
+gradientDesc <- function(x, k = 2, rate = 0.001, converg = 0.001, max_iter,
+                         plot = FALSE, ...) {
 
     x = as.matrix(x)
     n = nrow(x)
@@ -66,6 +69,11 @@ gradientDesc <- function(x, k = 2, rate = 0.001, converg = 0.001, max_iter) {
             colnames(A) = c(paste0("Dim", seq(1,k,1)))
             out = list(Ahat = A, Bhat = B, method="Gradient descent")
             print(paste("The process converge with", iterations, "iterations"))
+
+            if (plot & ncol(A)>1) {
+                print(plotBLB(x=out))
+            }
+
             class(out) <- c("BiplotML", "list")
             return(out)
         }
@@ -79,9 +87,15 @@ gradientDesc <- function(x, k = 2, rate = 0.001, converg = 0.001, max_iter) {
             colnames(A) = c(paste0("Dim", seq(1,k,1)))
             out = list(Ahat = A, Bhat = B, method="Gradient descent")
             print(paste("The process not converge with", max_iter, "iterations"))
+
+            if (plot & ncol(A)>1) {
+                print(plotBLB(x=out))
+            }
             class(out) <- c("BiplotML", "list")
             return(out)
+
         }
     }
+
 }
 

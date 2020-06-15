@@ -25,7 +25,7 @@ plotBLB(
 
 \item{col.var}{Color for the variables.}
 
-\item{label.ind}{By default the row points are labelled.}
+\item{label.ind}{By default the row points are not labelled.}
 
 \item{draw}{The graph to draw ("ind" for the individuals, "var" for the variables and "biplot" for the row and columns coordinates in the same graph)}
 
@@ -45,16 +45,18 @@ Plot the bootstrap binary logistic biplot and draw confidence ellipses on the in
 If draw = "ind", then the biplot is plotted only for individuals and if draw = "var" then is plotted only for the variables.
 }
 \examples{
+\dontrun{
 data("Methylation")
 set.seed(123456)
-
-outBLB = bootBLB(x = Methylation, sup = TRUE, plot=FALSE)
+outBLB <- bootBLB(x = Methylation, sup = TRUE, plot=FALSE)
 plotBLB(x = outBLB, titles = "Methylation Logistic Biplot", ellipses = FALSE)
 plotBLB(x = outBLB, titles = "Methylation LogBiplot", endsegm = 0.95)
 plotBLB(x = outBLB, label.ind = TRUE, titles = "Methylation LogBiplot")
 }
+}
 \references{
 Meulman, J. J., & Heiser, W. J. (1983). The display of bootstrap solutions in multidimensional scaling. Murray Hill, NJ: Bell Laboratories. (Technical memorandum)
+
 Vicente-Villardon, J.L. and Galindo, M. Purificacion (2006), \emph{Multiple Correspondence Analysis and related Methods. Chapter: Logistic Biplots}. Chapman-Hall
 }
 \seealso{

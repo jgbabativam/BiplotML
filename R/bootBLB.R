@@ -19,9 +19,10 @@
 #' @param k Dimensions number. By default \code{k = 2}.
 #' @param L Penalization parameter. By default \code{L = 0}.
 #' @param method Method to be used to estimate the parameters. By default \code{ method="CG"}
+#' @param type For the conjugate-gradients method. Takes value 1 for the Fletcher–Reeves update, 2 for Polak–Ribiere and 3 for Beale–Sorenson.
 #' @param plot Plot the Bootstrap Logistic Biplot.
 #' @param sup Boolean, if TRUE, rows that are not selected in each resample are treated as supplementary individuals. See details.
-#' @param ellipses Draw confidence ellipses. By default is TRUE.
+#' @param ellipses Draw confidence ellipses. By default is FALSE.
 #' @param maxit The maximum number of iterations. Defaults to 100 for the gradient methods, and 500 without gradient.
 #' @param resamples Number of iterations in the bootstrap process. By default \code{100}.
 #' @param conf Level confidence in the ellipses. By default \code{conf=0.90}
@@ -35,18 +36,26 @@
 #' Vicente-Villardon, J.L. and Galindo, M. Purificacion (2006), \emph{Multiple Correspondence Analysis and related Methods. Chapter: Logistic Biplots}. Chapman-Hall
 #' @seealso \code{\link{plotBLB}, \link{performanceBLB}}
 #' @examples
+#' \dontrun{
 #' data("Methylation")
-#' set.seed(123456)
+#' set.seed(02052020)
 #' out.sup <- bootBLB(x = Methylation, ellipses = FALSE)
 #' out <- bootBLB(x = Methylation, sup = FALSE, ellipses = TRUE)
+#' }
 
-bootBLB <- function(x, k=2, L=0, method="CG", plot=TRUE, sup=TRUE,
-                    ellipses=TRUE, maxit=NULL, resamples = 100, conf = 0.9){
+bootBLB <- function(x, k=2, L=0, method="CG", type = 1, plot=TRUE, sup=TRUE,
+                    ellipses=FALSE, maxit=NULL, resamples = 100, conf = 0.9){
   n=nrow(x); p=ncol(x); aik=n*k; bjk=p*(k+1)
   dTheta = aik + bjk; s=k+1
 
-  res = optimr(par=runif(dTheta), fn = J.BipLog.BIN, gr = Grad.BipLog.BIN,
-               xt=x, k = k, lambda = L, method = method)
+  if(method == "CG"){
+    res = optimr(par=runif(dTheta), fn = J.BipLog.BIN, gr = Grad.BipLog.BIN,
+                 xt=x, k = k, lambda = L, method = method, control = list(type = type))
+  }else{
+    res = optimr(par=runif(dTheta), fn = J.BipLog.BIN, gr = Grad.BipLog.BIN,
+                 xt=x, k = k, lambda = L, method = method)
+  }
+
   par=res$par
   ### row coordenates
   A = data.frame(matrix(res$par[1:aik], n, k))
@@ -81,8 +90,13 @@ bootBLB <- function(x, k=2, L=0, method="CG", plot=TRUE, sup=TRUE,
     par2 = runif(bjk)
     param = c(par1, par2)
 
-    res.b = optimr(par=param, fn = J.BipLog.BIN, gr = Grad.BipLog.BIN,
-                   xt=xb, k = k, lambda = L, method = method)
+    if(method == "CG"){
+      res.b = optimr(par=param, fn = J.BipLog.BIN, gr = Grad.BipLog.BIN,
+                     xt=xb, k = k, lambda = L, method = method, control = list(type = type))
+    }else{
+      res.b = optimr(par=param, fn = J.BipLog.BIN, gr = Grad.BipLog.BIN,
+                     xt=xb, k = k, lambda = L, method = method)
+    }
 
     ### Column Coordinates
     Bb = matrix(res.b$par[(aik + 1):dTheta], p, k+1)
@@ -208,12 +222,17 @@ bootBLB <- function(x, k=2, L=0, method="CG", plot=TRUE, sup=TRUE,
   zeros <- n - ones
 
   confusion <- data.frame( Sensitivy = round(100*apply((Pr == 1) & (x == 1), 2, sum)/ ones, 1),
-                           Specificity = round(100*apply((Pr == 1) & (x == 0), 2, sum)/ zeros, 1),
+                           Specificity = round(100*apply((Pr == 0) & (x == 0), 2, sum)/ zeros, 1),
                            Global = round(100*colSums(PCC)/nrow(PCC), 1))
 
 
   rownames(Ahat) <- rownames(x)
   rownames(Bhat) <- colnames(x)
+
+  if(method == "CG" & type == 1) method <- "CG: Fletcher--Reeves"
+  if(method == "CG" & type == 2) method <- "CG: Polak--Ribiere"
+  if(method == "CG" & type == 3) method <- "CG: Beale--Sorenson"
+  if(method == "Rcgmin") method <- "CG: Dai--Yuan"
 
   if(ellipses){
     out <- list(Ahat = Ahat, Bhat = Bhat, BootA=ResultA, BootB=ResultB, pred= Pr, fit = confusion, rows=rows, cols = cols, method=method, Ellip=Ellip)
@@ -228,4 +247,3 @@ bootBLB <- function(x, k=2, L=0, method="CG", plot=TRUE, sup=TRUE,
   class(out) <- c("BiplotML", "list")
   return(out)
 }
-

@@ -4,7 +4,15 @@
 \alias{gradientDesc}
 \title{Gradient function for Binary Logistic Biplot}
 \usage{
-gradientDesc(x, k = 2, rate = 0.001, converg = 0.001, max_iter)
+gradientDesc(
+  x,
+  k = 2,
+  rate = 0.001,
+  converg = 0.001,
+  max_iter,
+  plot = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{Binary matrix.}
@@ -16,6 +24,10 @@ gradientDesc(x, k = 2, rate = 0.001, converg = 0.001, max_iter)
 \item{converg}{Tolerance limit to achieve convergence. By default \code{converg = 0.001}}
 
 \item{max_iter}{Maximum iterations number.}
+
+\item{plot}{Plot the Logistic Biplot.}
+
+\item{...}{other arguments}
 }
 \value{
 The coefficients of A and B matrix.
@@ -29,14 +41,15 @@ Also, note that the gradient is: \deqn{\nabla \ell= \left(\frac{\partial \ell}{\
 }
 \examples{
 data('Methylation')
-set.seed(123456)
-outGD <- gradientDesc(x = Methylation, k=2, rate = 0.001, converg=0.001, max_iter=10000)
+set.seed(02052020)
+MatGD <- gradientDesc(x = Methylation, k=2, max_iter=10000)
+outGD <- gradientDesc(x = Methylation, k=2, max_iter=10000, plot = TRUE)
 }
 \references{
 Vicente-Villardon, J.L. and Galindo, M. Purificacion (2006), \emph{Multiple Correspondence Analysis and related Methods. Chapter: Logistic Biplots}. Chapman-Hall
 }
 \seealso{
-\code{\link{J.BipLog.BIN}}
+\code{\link{plotBLB}, \link{performanceBLB}}
 }
 \author{
 Giovany Babativa <gbabativam@gmail.com>
