@@ -20,6 +20,8 @@
 #' @param maxit The maximum number of iterations. Defaults to 100 for the gradient methods, and 500 without gradient.
 #' @param endsegm The segment starts at 0.5 and ends at this value. By default \code{endsegm = 0.90}.
 #' @param label.ind By default the row points are not labelled.
+#' @param col.ind Color for the rows marks.
+#' @param draw The graph to draw ("ind" for the individuals, "var" for the variables and "biplot" for the row and columns coordinates in the same graph)
 #' @references
 #' John C. Nash (2011). Unifying Optimization Algorithms to Aid Software System Users:optimx for R. Journal of Statistical Software. 43(9). 1--14.
 #'
@@ -37,7 +39,8 @@
 #' ### Quasi-Newton algorithm with BFGS method
 #' res.LB <- LogBip(x = Methylation, method = "BFGS")
 
-LogBip <- function(x, k=2, L=0, method="CG", type = 1, plot=TRUE, maxit=NULL, endsegm = 0.90, label.ind = FALSE, ...){
+LogBip <- function(x, k=2, L=0, method="CG", type = 1, plot=TRUE, maxit=NULL, endsegm = 0.90, label.ind = FALSE, col.ind = NULL,
+                   draw = c("biplot","ind","var")){
   n=nrow(x); p=ncol(x); aik=n*k; bjk=p*(k+1)
   dTheta = aik + bjk; s=k+1
 
@@ -84,7 +87,7 @@ LogBip <- function(x, k=2, L=0, method="CG", type = 1, plot=TRUE, maxit=NULL, en
   out <- list(Ahat = Ahat, Bhat = Bhat, pred= Pr, fit = confusion, method=method)
 
   if (plot & ncol(Ahat)>1) {
-    print(plotBLB(x=out, ellipses = FALSE, endsegm = endsegm, titles = "Logistic Biplot", label.ind = label.ind))
+    print(plotBLB(x=out, ellipses = FALSE, endsegm = endsegm, titles = "Logistic Biplot", label.ind = label.ind, col.ind = col.ind, draw = draw))
   }
 
   class(out) <- c("BiplotML", "list")

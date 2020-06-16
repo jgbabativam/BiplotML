@@ -7,7 +7,7 @@
 plotBLB(
   x,
   dim = c(1, 2),
-  col.ind = "#E7B800",
+  col.ind = NULL,
   col.var = "#00AFBB",
   label.ind = FALSE,
   draw = c("biplot", "ind", "var"),

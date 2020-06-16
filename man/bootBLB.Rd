@@ -15,7 +15,8 @@ bootBLB(
   ellipses = FALSE,
   maxit = NULL,
   resamples = 100,
-  conf = 0.9
+  conf = 0.9,
+  col.ind = NULL
 )
 }
 \arguments{
@@ -40,6 +41,8 @@ bootBLB(
 \item{resamples}{Number of iterations in the bootstrap process. By default \code{100}.}
 
 \item{conf}{Level confidence in the ellipses. By default \code{conf=0.90}}
+
+\item{col.ind}{Color for the rows.}
 }
 \value{
 Coordenates of the matrix A and B in resamples and Biplot

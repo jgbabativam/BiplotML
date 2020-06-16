@@ -35,7 +35,7 @@
 #' }
 #' @export
 
-plotBLB <- function(x, dim=c(1, 2), col.ind = "#E7B800", col.var="#00AFBB",
+plotBLB <- function(x, dim=c(1, 2), col.ind = NULL, col.var="#00AFBB",
                      label.ind = FALSE, draw = c("biplot","ind","var"), titles = NULL,
                      ellipses = FALSE, endsegm = 0.75){
 
@@ -70,19 +70,39 @@ plotBLB <- function(x, dim=c(1, 2), col.ind = "#E7B800", col.var="#00AFBB",
     if (is.null(titles)) titulo <- "Individuals plot"
     if (!is.null(titles)) titulo <- titles
 
+    if(is.null(col.ind)){
+      g <-  ggplot() +
+        geom_point(data=EspA, aes(x=Dim1, y=Dim2), color='#E7B800', size = 2, shape=17)+
+        geom_vline(xintercept = 0, color = "black", linetype = 2) +
+        geom_hline(yintercept = 0, color = "black", linetype = 2)  +
+        xlab("Dimension 1") + ylab("Dimension 2") +
+        xlim(min.plot, max.plot) + ylim(min.plot, max.plot) +
+        scale_color_brewer(palette="Set1") +
+        theme_bw() +
+        theme(axis.text = element_text(face = "bold"), legend.position = "none") +
+        labs(title = titulo,
+             subtitle = subt,
+             caption = Sys.Date()) +
+        theme(plot.title = element_text(hjust = 0.5), plot.subtitle =  element_text(hjust = 0.5))
+    }else{
     g <-  ggplot() +
-      geom_point(data=EspA, aes(x=Dim1, y=Dim2), colour=col.ind, size = 2, shape=17)+
+      geom_point(data=EspA, aes(x=Dim1, y=Dim2, colour=col.ind), size = 2, shape=17)+
       geom_vline(xintercept = 0, color = "black", linetype = 2) +
       geom_hline(yintercept = 0, color = "black", linetype = 2)  +
       xlab("Dimension 1") + ylab("Dimension 2") +
-      geom_text_repel(data=EspA, aes(x=Dim1, y=Dim2, label = rownames(EspA)), size=3.5, segment.color = "grey50") +
-      xlim(min.plot, max.plot) + ylim(-min.plot, max.plot) +
+      xlim(min.plot, max.plot) + ylim(min.plot, max.plot) +
+      scale_color_brewer(palette="Set1") +
       theme_bw() +
-      theme(axis.text = element_text(face = "bold"), legend.position = "none") +
+      theme(axis.text = element_text(face = "bold")) +
       labs(title = titulo,
            subtitle = subt,
            caption = Sys.Date()) +
       theme(plot.title = element_text(hjust = 0.5), plot.subtitle =  element_text(hjust = 0.5))
+    }
+    if(label.ind){
+      g <- g +
+        geom_text_repel(data=EspA, aes(x=Dim1, y=Dim2, label = rownames(EspA)), size=3.5, segment.color = "grey50")
+    }
   }
 
   min.plot2 <- floor(min(min(EspB$x.50), min(EspB$x.75), min(EspB$y.50), min(EspB$y.75)))
@@ -120,8 +140,27 @@ plotBLB <- function(x, dim=c(1, 2), col.ind = "#E7B800", col.var="#00AFBB",
     if (is.null(titles)) titulo <- "Bootstrap Binary Logistic Biplot"
     if (!is.null(titles)) titulo <- titles
 
+    if(is.null(col.ind)){
+      g <- ggplot() +
+        geom_point(data=EspA, aes(x=Dim1, y=Dim2), color='#E7B800', size = 2, shape=17)+
+        geom_segment(data=EspB, aes(x=x.50, y=y.50, xend=x.75, yend=y.75), arrow=arrow(angle=20,type="closed",ends="last", length=unit(0.3,"cm")), colour = col.var, show.legend=FALSE) +
+        geom_text_repel(data=EspB, aes(x=x.75, y=y.75, label = rownames(EspB),
+                                       angle = (180/pi) * atan(y.75/x.75), hjust = (1 - 2 * sign(x.75))/ 2),
+                        size=3, segment.color = "grey50", vjust=0) +
+        geom_vline(xintercept = 0, color = "black", linetype = 2) +
+        geom_hline(yintercept = 0, color = "black", linetype = 2) +
+        xlab("Dimension 1") + ylab("Dimension 2") +
+        xlim(min.plot3, max.plot3) + ylim(min.plot3, max.plot3) +
+        scale_color_brewer(palette="Set1") +
+        theme_bw() +
+        theme(axis.text = element_text(face = "bold"), legend.position = "none") +
+        labs(title = titulo,
+             subtitle = subt,
+             caption = Sys.Date()) +
+        theme(plot.title = element_text(hjust = 0.5), plot.subtitle =  element_text(hjust = 0.5))
+    }else{
     g <- ggplot() +
-      geom_point(data=EspA, aes(x=Dim1, y=Dim2), colour=col.ind, size = 2, shape=17)+
+      geom_point(data=EspA, aes(x=Dim1, y=Dim2, colour=col.ind), size = 2, shape=17)+
       geom_segment(data=EspB, aes(x=x.50, y=y.50, xend=x.75, yend=y.75), arrow=arrow(angle=20,type="closed",ends="last", length=unit(0.3,"cm")), colour = col.var, show.legend=FALSE) +
       geom_text_repel(data=EspB, aes(x=x.75, y=y.75, label = rownames(EspB),
                                      angle = (180/pi) * atan(y.75/x.75), hjust = (1 - 2 * sign(x.75))/ 2),
@@ -130,12 +169,14 @@ plotBLB <- function(x, dim=c(1, 2), col.ind = "#E7B800", col.var="#00AFBB",
       geom_hline(yintercept = 0, color = "black", linetype = 2) +
       xlab("Dimension 1") + ylab("Dimension 2") +
       xlim(min.plot3, max.plot3) + ylim(min.plot3, max.plot3) +
+      scale_color_brewer(palette="Set1") +
       theme_bw() +
-      theme(axis.text = element_text(face = "bold"), legend.position = "none") +
+      theme(axis.text = element_text(face = "bold")) +
       labs(title = titulo,
            subtitle = subt,
            caption = Sys.Date()) +
       theme(plot.title = element_text(hjust = 0.5), plot.subtitle =  element_text(hjust = 0.5))
+    }
 
     if(label.ind){
       g <- g +

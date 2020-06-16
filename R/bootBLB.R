@@ -26,6 +26,8 @@
 #' @param maxit The maximum number of iterations. Defaults to 100 for the gradient methods, and 500 without gradient.
 #' @param resamples Number of iterations in the bootstrap process. By default \code{100}.
 #' @param conf Level confidence in the ellipses. By default \code{conf=0.90}
+#' @param col.ind Color for the rows.
+#'
 #' @references
 #' John C. Nash (2011). Unifying Optimization Algorithms to Aid Software System Users:optimx for R. Journal of Statistical Software. 43(9). 1--14.
 #'
@@ -44,7 +46,7 @@
 #' }
 
 bootBLB <- function(x, k=2, L=0, method="CG", type = 1, plot=TRUE, sup=TRUE,
-                    ellipses=FALSE, maxit=NULL, resamples = 100, conf = 0.9){
+                    ellipses=FALSE, maxit=NULL, resamples = 100, conf = 0.9, col.ind = NULL){
   n=nrow(x); p=ncol(x); aik=n*k; bjk=p*(k+1)
   dTheta = aik + bjk; s=k+1
 
@@ -241,7 +243,7 @@ bootBLB <- function(x, k=2, L=0, method="CG", type = 1, plot=TRUE, sup=TRUE,
   }
 
   if (plot & ncol(Ahat)>1) {
-    print(plotBLB(x=out, ellipses = ellipses, endsegm = 0.95))
+    print(plotBLB(x=out, ellipses = ellipses, endsegm = 0.95, col.ind = col.ind))
   }
 
   class(out) <- c("BiplotML", "list")

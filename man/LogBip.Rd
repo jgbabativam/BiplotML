@@ -14,7 +14,8 @@ LogBip(
   maxit = NULL,
   endsegm = 0.9,
   label.ind = FALSE,
-  ...
+  col.ind = NULL,
+  draw = c("biplot", "ind", "var")
 )
 }
 \arguments{
@@ -35,6 +36,10 @@ LogBip(
 \item{endsegm}{The segment starts at 0.5 and ends at this value. By default \code{endsegm = 0.90}.}
 
 \item{label.ind}{By default the row points are not labelled.}
+
+\item{col.ind}{Color for the rows marks.}
+
+\item{draw}{The graph to draw ("ind" for the individuals, "var" for the variables and "biplot" for the row and columns coordinates in the same graph)}
 }
 \value{
 Coordenates of the matrix A and B in resamples and Biplot
