@@ -1,6 +1,6 @@
 Package: BiplotML
 Title: Biplots Estimation with Algorithms ML 
-Version: 0.0.1
+Version: 0.1.1
 Date: 2020-04-30
 Authors@R:
     person(given = "Jose Giovany",
@@ -11,6 +11,7 @@ Authors@R:
 Maintainer: Jose Giovany Babativa Marquez <gbabativam@gmail.com>           
 Depends:
     R (>= 3.5),
+    tidyr,
     dplyr,
     ggplot2 (>= 3.0.0),
     ggrepel,
@@ -25,6 +26,9 @@ RoxygenNote: 7.1.0
 Suggests: 
     testthat,
     knitr,
-    rmarkdown
+    rmarkdown,
+    RSpectra
 URL: https://github.com/jgbabativam/BiplotML
 BugReports: https://github.com/jgbabativam/BiplotML/issues
+Imports: 
+    logisticPCA

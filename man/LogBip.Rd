@@ -2,7 +2,7 @@
 % Please edit documentation in R/LogBip.R
 \name{LogBip}
 \alias{LogBip}
-\title{Fitting a Binary Logistic Biplot using bootstrap methodology}
+\title{Fitting a Binary Logistic Biplot using bootstrap methodology and select a threshold to create the classification rule}
 \usage{
 LogBip(
   x,
@@ -15,7 +15,8 @@ LogBip(
   endsegm = 0.9,
   label.ind = FALSE,
   col.ind = NULL,
-  draw = c("biplot", "ind", "var")
+  draw = c("biplot", "ind", "var"),
+  random_start = FALSE
 )
 }
 \arguments{
@@ -25,7 +26,7 @@ LogBip(
 
 \item{L}{Penalization parameter. By default \code{L = 0}.}
 
-\item{method}{Method to be used to estimate the parameters. By default \code{ method="CG"}}
+\item{method}{Method to be used to estimate the parameters. By default \code{method="CG"}}
 
 \item{type}{For the conjugate-gradients method. Takes value 1 for the Fletcher–Reeves update, 2 for Polak–Ribiere and 3 for Beale–Sorenson.}
 
@@ -40,35 +41,56 @@ LogBip(
 \item{col.ind}{Color for the rows marks.}
 
 \item{draw}{The graph to draw ("ind" for the individuals, "var" for the variables and "biplot" for the row and columns coordinates in the same graph)}
+
+\item{random_start}{Logical value; whether to randomly inititalize the parameters. If \code{FALSE},
+algorithm will use an SVD as starting value.}
 }
 \value{
-Coordenates of the matrix A and B in resamples and Biplot
+Coordenates of the matrix A and B, threshold for classification rule
 }
 \description{
 This function estimates the vector \eqn{\mu}, matrix A and matrix B using the optimization algorithm chosen by the user and applies a bootstrap methodology to determine the confidence ellipses.
 }
 \details{
-Fitting when sup=TRUE ... whereas sup=FALSE ...
+The methods that can be used to estimate the parameters of a logistic biplot
+
+- For methods based on the conjugate gradient use method = "CG" and
+
+      - type = 1 for the Fletcher Reeves.
+      - type = 2 for Polak Ribiere.
+      - type = 3 for Hestenes Stiefel.
+      - type = 4 for Dai Yuan.
+
+- To use the iterative algorithm Majorization-Minimization then method = "MM".
+
+- To use the BFGS formula, method = "BFGS".
 }
 \examples{
+\dontrun{
 data("Methylation")
-set.seed(02052020)
 ### Conjugate Gradient with Fletcher and Reeves method
-res.LB <- LogBip(x = Methylation)
+res <- LogBip(x = Methylation, plot = FALSE)
+### Conjugate Gradient with Polak Ribiere method
+res <- LogBip(x = Methylation, type = 2)
+### Majorization-Minimization method
+res <- LogBip(x = Methylation, method = "MM", maxit = 1000)
 ### Quasi-Newton algorithm with BFGS method
-res.LB <- LogBip(x = Methylation, method = "BFGS")
+res <- LogBip(x = Methylation, method = "BFGS")
+}
 }
 \references{
+De Leeuw, Jan (2006). Principal component analysis of binary data by iterated singular value decomposition. Computational Statistics & Data Analysis 50 (1), 21–-39
+
 John C. Nash (2011). Unifying Optimization Algorithms to Aid Software System Users:optimx for R. Journal of Statistical Software. 43(9). 1--14.
 
 John C. Nash (2014). On Best Practice Optimization Methods in R. Journal of Statistical Software. 60(2). 1--14.
 
-Milan, L., & Whittaker, J. (1995). Application of the parametric bootstrap to models that incorporate a singular value decomposition. Applied Statistics, 44, 31–49.
+Landgraf, A. J., & Lee, Y. (2020). Dimensionality reduction for binary data through the projection of natural parameters. Journal of Multivariate Analysis, 104668.
 
 Vicente-Villardon, J.L. and Galindo, M. Purificacion (2006), \emph{Multiple Correspondence Analysis and related Methods. Chapter: Logistic Biplots}. Chapman-Hall
 }
 \seealso{
-\code{\link{plotBLB}, \link{performanceBLB}}
+\code{\link{plotBLB}, \link{pred_LB}, \link{fitted_LB}}
 }
 \author{
 Giovany Babativa <gbabativam@gmail.com>
