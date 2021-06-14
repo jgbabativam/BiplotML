@@ -1,10 +1,9 @@
 #' @importFrom optimr optimr
 #' @importFrom stats runif
-#' @importFrom logisticPCA logisticSVD
 #' @export
 #'
 #' @title
-#' Fitting a Binary Logistic Biplot using bootstrap methodology and select a threshold to create the classification rule
+#' Fitting a Binary Logistic Biplot using optimization methods
 #' @description
 #' This function estimates the vector \eqn{\mu}, matrix A and matrix B using the optimization algorithm chosen by the user and applies a bootstrap methodology to determine the confidence ellipses.
 #' @return
@@ -19,13 +18,12 @@
 #'       - type = 3 for Hestenes Stiefel.
 #'       - type = 4 for Dai Yuan.
 #'
-#' - To use the iterative algorithm Majorization-Minimization then method = "MM".
+#' - To use the iterative coordinate descendent MM algorithm then method = "MM".
 #'
 #' - To use the BFGS formula, method = "BFGS".
 #' @author Giovany Babativa <gbabativam@@gmail.com>
 #' @param x Binary matrix.
 #' @param k Dimensions number. By default \code{k = 2}.
-#' @param L Penalization parameter. By default \code{L = 0}.
 #' @param method Method to be used to estimate the parameters. By default \code{method="CG"}
 #' @param type For the conjugate-gradients method. Takes value 1 for the Fletcher–Reeves update, 2 for Polak–Ribiere and 3 for Beale–Sorenson.
 #' @param plot Plot the Bootstrap Logistic Biplot.
@@ -36,14 +34,16 @@
 #' @param draw The graph to draw ("ind" for the individuals, "var" for the variables and "biplot" for the row and columns coordinates in the same graph)
 #' @param random_start Logical value; whether to randomly inititalize the parameters. If \code{FALSE},
 #'   algorithm will use an SVD as starting value.
+#' @param trucated Find the k largest singular values and vectors of a matrix.
+#' @param L Penalization parameter. By default \code{L = 0}.
 #' @references
-#' De Leeuw, Jan (2006). Principal component analysis of binary data by iterated singular value decomposition. Computational Statistics & Data Analysis 50 (1), 21–-39
+#' Babativa-Marquez, J.G. and Vicente-Villardon, J.L. (2021). Logistic biplot by conjugate gradient algorithms and iterated SVD. Mathematics 2021.
 #'
 #' John C. Nash (2011). Unifying Optimization Algorithms to Aid Software System Users:optimx for R. Journal of Statistical Software. 43(9). 1--14.
 #'
 #' John C. Nash (2014). On Best Practice Optimization Methods in R. Journal of Statistical Software. 60(2). 1--14.
 #'
-#' Landgraf, A. J., & Lee, Y. (2020). Dimensionality reduction for binary data through the projection of natural parameters. Journal of Multivariate Analysis, 104668.
+#' Nocedal, J.;Wright, S. (2006). Numerical optimization; Springer Science & Business Media.
 #'
 #' Vicente-Villardon, J.L. and Galindo, M. Purificacion (2006), \emph{Multiple Correspondence Analysis and related Methods. Chapter: Logistic Biplots}. Chapman-Hall
 #' @seealso \code{\link{plotBLB}, \link{pred_LB}, \link{fitted_LB}}
@@ -60,8 +60,8 @@
 #' res <- LogBip(x = Methylation, method = "BFGS")
 #' }
 
-LogBip <- function(x, k=2, L=0, method="CG", type = 1, plot=TRUE, maxit=NULL, endsegm = 0.90, label.ind = FALSE, col.ind = NULL,
-                   draw = c("biplot","ind","var"), random_start=FALSE){
+LogBip <- function(x, k=2, method="MM", type = NULL, plot=TRUE, maxit=NULL, endsegm = 0.90, label.ind = FALSE, col.ind = NULL,
+                   draw = c("biplot","ind","var"), random_start=FALSE, truncated = TRUE, L = 0){
 
   if(any(is.na(x))){
     x <-  sweep(x, MARGIN = 2,
@@ -98,16 +98,15 @@ LogBip <- function(x, k=2, L=0, method="CG", type = 1, plot=TRUE, maxit=NULL, en
                  xt=x, k = k, lambda = L, method = method, control = list(type = type))
   }else if(method == "MM"){
     if(!is.null(maxit)){
-    res <- logisticPCA::logisticSVD(x = x, k = k, max_iters = maxit, random_start = random_start)
+    res <- sdv_MM(x = x, k = k, iterations = maxit, random = random_start, truncated = truncated)
     }else{
-    res <- logisticPCA::logisticSVD(x = x, k = k, max_iters = 2000, random_start = random_start)
+    res <- sdv_MM(x = x, k = k, random = random_start, truncated = truncated)
     }
   }else{
     res <- optimr(par=params, fn = J.BipLog.BIN, gr = Grad.BipLog.BIN,
                  xt=x, k = k, lambda = L, method = method)
   }
 
-  ### row coordenates
   if(method == "MM"){
     Ahat <- data.frame(res$A)
   }else{
@@ -117,7 +116,6 @@ LogBip <- function(x, k=2, L=0, method="CG", type = 1, plot=TRUE, maxit=NULL, en
   colnames(Ahat) = c(paste0("Dim", seq(1,k,1)))
   rownames(Ahat) = rownames(x)
 
-  ### column coordinates
   if(method == "MM"){
   Bhat <- data.frame(res$mu, res$B)
   }else{
@@ -128,7 +126,7 @@ LogBip <- function(x, k=2, L=0, method="CG", type = 1, plot=TRUE, maxit=NULL, en
 
   rownames(Ahat) <- rownames(x)
 
-  if(method == "MM") method <- "MM: Majorization-Minimization"
+  if(method == "MM") method <- "coordinate descendent MM"
   if(method == "CG" & type == 1) method <- "CG: Fletcher--Reeves"
   if(method == "CG" & type == 2) method <- "CG: Polak--Ribiere"
   if(method == "CG" & type == 3) method <- "CG: Beale--Sorenson"

@@ -30,5 +30,3 @@ Suggests:
     RSpectra
 URL: https://github.com/jgbabativam/BiplotML
 BugReports: https://github.com/jgbabativam/BiplotML/issues
-Imports: 
-    logisticPCA

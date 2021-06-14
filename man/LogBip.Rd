@@ -2,29 +2,28 @@
 % Please edit documentation in R/LogBip.R
 \name{LogBip}
 \alias{LogBip}
-\title{Fitting a Binary Logistic Biplot using bootstrap methodology and select a threshold to create the classification rule}
+\title{Fitting a Binary Logistic Biplot using optimization methods}
 \usage{
 LogBip(
   x,
   k = 2,
-  L = 0,
-  method = "CG",
-  type = 1,
+  method = "MM",
+  type = NULL,
   plot = TRUE,
   maxit = NULL,
   endsegm = 0.9,
   label.ind = FALSE,
   col.ind = NULL,
   draw = c("biplot", "ind", "var"),
-  random_start = FALSE
+  random_start = FALSE,
+  truncated = TRUE,
+  L = 0
 )
 }
 \arguments{
 \item{x}{Binary matrix.}
 
 \item{k}{Dimensions number. By default \code{k = 2}.}
-
-\item{L}{Penalization parameter. By default \code{L = 0}.}
 
 \item{method}{Method to be used to estimate the parameters. By default \code{method="CG"}}
 
@@ -44,6 +43,10 @@ LogBip(
 
 \item{random_start}{Logical value; whether to randomly inititalize the parameters. If \code{FALSE},
 algorithm will use an SVD as starting value.}
+
+\item{L}{Penalization parameter. By default \code{L = 0}.}
+
+\item{trucated}{Find the k largest singular values and vectors of a matrix.}
 }
 \value{
 Coordenates of the matrix A and B, threshold for classification rule
@@ -61,7 +64,7 @@ The methods that can be used to estimate the parameters of a logistic biplot
       - type = 3 for Hestenes Stiefel.
       - type = 4 for Dai Yuan.
 
-- To use the iterative algorithm Majorization-Minimization then method = "MM".
+- To use the iterative coordinate descendent MM algorithm then method = "MM".
 
 - To use the BFGS formula, method = "BFGS".
 }
@@ -79,13 +82,13 @@ res <- LogBip(x = Methylation, method = "BFGS")
 }
 }
 \references{
-De Leeuw, Jan (2006). Principal component analysis of binary data by iterated singular value decomposition. Computational Statistics & Data Analysis 50 (1), 21–-39
+Babativa-Marquez, J.G. and Vicente-Villardon, J.L. (2021). Logistic biplot by conjugate gradient algorithms and iterated SVD. Mathematics 2021.
 
 John C. Nash (2011). Unifying Optimization Algorithms to Aid Software System Users:optimx for R. Journal of Statistical Software. 43(9). 1--14.
 
 John C. Nash (2014). On Best Practice Optimization Methods in R. Journal of Statistical Software. 60(2). 1--14.
 
-Landgraf, A. J., & Lee, Y. (2020). Dimensionality reduction for binary data through the projection of natural parameters. Journal of Multivariate Analysis, 104668.
+Nocedal, J.;Wright, S. (2006). Numerical optimization; Springer Science & Business Media.
 
 Vicente-Villardon, J.L. and Galindo, M. Purificacion (2006), \emph{Multiple Correspondence Analysis and related Methods. Chapter: Logistic Biplots}. Chapman-Hall
 }
