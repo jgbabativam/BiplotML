@@ -3,7 +3,6 @@
 #' @importFrom stats runif
 #' @importFrom stats aggregate
 #' @importFrom stats quantile
-#' @import dplyr
 #' @export
 #'
 #' @title
@@ -50,6 +49,12 @@ bootBLB <- function(x, k=2, L=0, method="CG", type = 1, plot=TRUE, sup=TRUE,
   n=nrow(x); p=ncol(x); aik=n*k; bjk=p*(k+1)
   dTheta = aik + bjk; s=k+1
 
+
+  if (!requireNamespace("dplyr", quietly = TRUE)) {
+    stop("Package \"dplyr\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+
   if(method == "CG"){
     res = optimr(par=runif(dTheta), fn = J.BipLog.BIN, gr = Grad.BipLog.BIN,
                  xt=x, k = k, lambda = L, method = method, control = list(type = type))
@@ -70,14 +75,14 @@ bootBLB <- function(x, k=2, L=0, method="CG", type = 1, plot=TRUE, sup=TRUE,
   colnames(B) = c(paste0("b", seq(0,k,1)))
 
   ### bootstrap process
-  Ai = A %>% mutate(rowId = row_number())
+  Ai = A |> dplyr::mutate(rowId = dplyr::row_number())
   Bi = as.matrix(B[,1:s])
 
   listA = list()
   listB = list()
 
   indica = rep(1:nrow(x))
-  xtemp <- x %>% `rownames<-`(seq_len(nrow(x)))
+  xtemp <- x |> `rownames<-`(seq_len(nrow(x)))
 
   for (i in 1:resamples) {
     sample_ind = as.matrix(sample(indica,replace = T))
@@ -118,21 +123,20 @@ bootBLB <- function(x, k=2, L=0, method="CG", type = 1, plot=TRUE, sup=TRUE,
                        xs=xsup, B=Bb, k = k, lambda = L, method = method)
 
       Asup = data.frame(matrix(res.sup$par, n_sup, k), rowId = Asup[,ncol(Asup)])
-      Abr = rbind(Ab_j, Asup) %>%
-        arrange(rowId)
+      Abr = rbind(Ab_j, Asup) |>
+            dplyr::arrange(rowId)
 
-      Ab = Abr %>% dplyr::select(-rowId)
+      Ab = Abr |> dplyr::select(-rowId)
 
-      #--- Rotate - reflect matrix A.
       outA = procOPA(as.matrix(A), as.matrix(Ab), scale = TRUE, reflect = TRUE)
       Arot = outA$Bhat
       R = outA$R
       SCR_A = outA$OSS
     }else{
-      Abr = Ab_j %>% arrange(rowId)                ### Matriz estimada bootstrap
-      Ai_b = inner_join(Ai, Abr, by="rowId") %>%   ### Matriz inicial solo con ind del boot
+      Abr = Ab_j |> dplyr::arrange(rowId)
+      Ai_b = dplyr::inner_join(Ai, Abr, by="rowId") |>
         dplyr::select(paste0("Dim", seq(1,k,1)))
-      Ab = Abr %>% dplyr::select(-rowId)
+      Ab = Abr |> dplyr::select(-rowId)
 
       #--- Rotate - reflect matrix A.
       outA = procOPA(as.matrix(Ai_b), as.matrix(Ab), scale = TRUE, reflect = TRUE)
@@ -169,19 +173,19 @@ bootBLB <- function(x, k=2, L=0, method="CG", type = 1, plot=TRUE, sup=TRUE,
   EspB <- aggregate(.~param, ResultB, mean)
   colnames(EspB) <- c("param", paste0("bb", seq(0,k,1)), "resampleb")
 
-  Ahat <- EspA %>% dplyr::select(starts_with("Dim"))
-  Bhat <- EspB %>% dplyr::select(starts_with("bb"))
+  Ahat <- EspA |> dplyr::select(dplyr::starts_with("Dim"))
+  Bhat <- EspB |> dplyr::select(dplyr::starts_with("bb"))
 
 
   if(ellipses){
     # ii.) Center Bootstrap Cloud
 
-    CentBootA <-  left_join(ResultA, EspA, by="ind")%>%
-      mutate(Dim1c = Dim1-Dimb1, Dim2c=Dim2-Dimb2) %>%
+    CentBootA <-  dplyr::left_join(ResultA, EspA, by="ind")|>
+      dplyr::mutate(Dim1c = Dim1-Dimb1, Dim2c=Dim2-Dimb2) |>
       dplyr::select(ind, resample, Dim1c, Dim2c)
 
-    CentBootB <-  left_join(ResultB, EspB, by="param") %>%
-      mutate(bj0c = b0-bb0, bj1c = b1-bb1, bj2c=b2-bb2) %>%
+    CentBootB <-  dplyr::left_join(ResultB, EspB, by="param") |>
+      dplyr::mutate(bj0c = b0-bb0, bj1c = b1-bb1, bj2c=b2-bb2) |>
       dplyr::select(param, resample, bj0c, bj1c, bj2c)
 
     #...... iii. iv. v.) Se hace para cada individuo
@@ -192,7 +196,7 @@ bootBLB <- function(x, k=2, L=0, method="CG", type = 1, plot=TRUE, sup=TRUE,
     for (a in 1:n){
       # El numero de filas no es igual en todos los casos, depende del numero de veces que salio en el
       # proceso de remuestreo
-      temp <-  dplyr::filter(CentBootA, ind == a) %>%
+      temp <-  dplyr::filter(CentBootA, ind == a) |>
         dplyr::select(Dim1c, Dim2c)
       sol <- svd(temp)
       #rep = sol$u %*% diag(sol$d) %*% t(sol$v)
@@ -202,7 +206,7 @@ bootBLB <- function(x, k=2, L=0, method="CG", type = 1, plot=TRUE, sup=TRUE,
       z <-  rbind(r * cos(theta), r * sin(theta))
 
       #.... Transformación Bootstrap al espacio original
-      esp  <-  dplyr::filter(EspA, ind == a) %>%
+      esp  <-  dplyr::filter(EspA, ind == a) |>
         dplyr::select(-ind, -resampleb)
 
       v <-  as.data.frame(as.matrix(rep(1, 500))%*% as.matrix(esp) + r*t(z)%*%diag(sol$d)%*%t(sol$v))

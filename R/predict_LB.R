@@ -1,4 +1,3 @@
-#' @import tidyr
 #' @title Predict logistic biplot and thresholds by variable
 #'
 #' @description Predicts the binary matrix and calculates the optimal thresholds per variable that minimize the Balanced Accuracy (BACC)
@@ -19,6 +18,16 @@
 
 pred_LB <- function(object, x, ncuts = 100){
 
+  if (!requireNamespace("tidyr", quietly = TRUE)) {
+    stop("Package \"tidyr\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+
+  if (!requireNamespace("dplyr", quietly = TRUE)) {
+    stop("Package \"dplyr\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+
   P <- fitted_LB(object, type = "response")
 
   if(is.null(colnames(x))) colnames(x) <- paste0('V', 1:ncol(x))
@@ -35,14 +44,14 @@ pred_LB <- function(object, x, ncuts = 100){
   })
   TEp <-  data.frame(dplyr::bind_rows(TE), threshold = seq(0, 1, length.out = ncuts))
 
-  thresholds <- TEp %>%
-                tidyr::pivot_longer(-threshold, names_to = "variable", values_to = "BACC") %>%
-                group_by(variable) %>%
-                mutate(merror = min(BACC)) %>%
-                dplyr::filter(BACC == merror) %>%
-                mutate(row = dplyr::row_number()) %>%
-                filter(row == 1) %>% ungroup %>%
-                select(variable, threshold, BACC)
+  thresholds <- TEp |>
+                tidyr::pivot_longer(-threshold, names_to = "variable", values_to = "BACC") |>
+                dplyr::group_by(variable) |>
+                dplyr::mutate(merror = min(BACC)) |>
+                dplyr::filter(BACC == merror) |>
+                dplyr::mutate(row = dplyr::row_number()) |>
+                dplyr::filter(row == 1) |> dplyr::ungroup() |>
+                dplyr::select(variable, threshold, BACC)
 
   thresholds <- thresholds[match(colnames(x), thresholds$variable),]
   Pr <- matrix(NA, nrow(P), ncol(P))

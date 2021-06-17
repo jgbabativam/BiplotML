@@ -155,6 +155,17 @@ train_miss_pattern <- function(data, K = 7){
 
 
 thresholds <- function(x, P, ncuts = 100){
+
+    if (!requireNamespace("tidyr", quietly = TRUE)) {
+        stop("Package \"tidyr\" needed for this function to work. Please install it.",
+             call. = FALSE)
+    }
+
+    if (!requireNamespace("dplyr", quietly = TRUE)) {
+        stop("Package \"dplyr\" needed for this function to work. Please install it.",
+             call. = FALSE)
+    }
+
     P <- as.matrix(P)
     if(is.null(colnames(x))) colnames(x) <- paste0('V', 1:ncol(x))
 
@@ -170,13 +181,13 @@ thresholds <- function(x, P, ncuts = 100){
     })
     TEp <-  data.frame(dplyr::bind_rows(TE), threshold = seq(0, 1, length.out = ncuts))
 
-    thresholds <- TEp %>%
-        tidyr::pivot_longer(-threshold, names_to = "variable", values_to = "BACC") %>%
-        group_by(variable) %>%
-        mutate(merror = min(BACC)) %>%
-        dplyr::filter(BACC == merror) %>%
-        mutate(row = dplyr::row_number()) %>%
-        filter(row == 1) %>% ungroup %>%
+    thresholds <- TEp |>
+        tidyr::pivot_longer(-threshold, names_to = "variable", values_to = "BACC") |>
+        dplyr::group_by(variable) |>
+        dplyr::mutate(merror = min(BACC)) |>
+        dplyr::filter(BACC == merror) |>
+        dplyr::mutate(row = dplyr::row_number()) |>
+        dplyr::filter(row == 1) |> dplyr::ungroup() |>
         dplyr::select(variable, threshold, BACC)
 
     thresholds <- thresholds[match(colnames(x), thresholds$variable),]
@@ -189,4 +200,59 @@ thresholds <- function(x, P, ncuts = 100){
     BACC <- round(100/2 * (c1 + c2), 2)
 
     out <- list(pred = Pr, thres = thresholds, BACC = BACC)
+}
+
+
+crossval <- function(x, k = 2, K = 7, thres = NULL, method = NULL, type = NULL){
+
+    folds <- train_miss_pattern(x, K = K)
+    missVal <- folds$missWold
+    train <- folds$Xtrain
+
+    err_T = list()
+    cv_errD = list()
+    for(i in 1:K){
+        if(method == "CG" & k > 0){
+            missBip <- BiplotML::LogBip(train[[i]], k = k,
+                                        method = method, type = type, plot = FALSE)
+            P <- fitted_LB(missBip, type = "response")
+        }else if(method == "BFGS" & k > 0){
+            missBip <- BiplotML::LogBip(train[[i]], k = k,
+                                        method = method, plot = FALSE)
+            P <- fitted_LB(missBip, type = "response")
+        }else if(method == "MM" & k > 0){
+            missBip <- BiplotML::LogBip(train[[i]], k = k,
+                                        method = "MM", random_start = FALSE, plot = FALSE)
+            P <- fitted_LB(missBip, type = "response")
+        }else{
+            P <- rep(1, nrow(x)) %*% t(as.matrix(colMeans(train[[i]], na.rm=TRUE)))
+        }
+
+        Xhat <- matrix(NA, nrow(P), ncol(P))
+        for(p in 1:ncol(P)){
+            Xhat[,p] <- ifelse(P[,p] >= thres$threshold[p], 1, 0)
+        }
+        Xhat[is.na(Xhat)] <- 0
+
+        Xhat_pred <- Xhat[missVal[[i]]]
+        xReal <- x[missVal[[i]]]
+
+        n1 <- sum(xReal);            n1t <- sum(x)
+        n0 <- length(xReal) - n1;    n0t <- length(x) - n1t
+
+        err0 <- sum(ifelse(xReal == 0 & Xhat_pred == 1, 1, 0))/n0
+        err1 <- sum(ifelse(xReal == 1 & Xhat_pred == 0, 1, 0))/n1
+
+        err0t <- sum(ifelse(x == 0 & Xhat == 1, 1, 0))/n0t
+        err1t <- sum(ifelse(x == 1 & Xhat == 0, 1, 0))/n1t
+
+        err_T[[i]] = 100/2 * (err0t + err1t)
+
+        cv_errD[[i]] <- 100/2 * (err0 + err1)
+    }
+    cvT <- round(mean(sapply(err_T, mean, na.rm = TRUE), na.rm = TRUE), 2)
+    cvD <- round(mean(sapply(cv_errD, mean, na.rm = TRUE), na.rm = TRUE), 2)
+
+    out <- list(cvT = cvT, cvD = cvD)
+    return(out)
 }

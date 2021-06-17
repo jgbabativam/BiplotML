@@ -33,10 +33,14 @@ cv_LogBip(
 This function run cross validation for logistic biplot
 }
 \examples{
-data("Methylation")
-cv_CG <- cv_LogBip(data = Methylation, k = 0:3, method = "CG", type = 1)
+set.seed(1234)
+x <- simBin(n = 100, p = 50, k = 3, D = 0.5, C = 20)
 \dontrun{
-cv_MM <- cv_LogBip(data = Methylation, k = 0:4, method = "MM", maxit = 1000)
+# cross-validation with coordinate descendent MM algorithm
+cv_MM <- cv_LogBip(data = x$X, k=0:5, method = "MM", maxit = 1000)
+
+# cross-validation with CG Fletcher-Reeves algorithm
+cv_CG <- cv_LogBip(data = x$X, k=0:5, method = "CG", type = 1)
 }
 }
 \references{
@@ -45,7 +49,7 @@ Bro R and Kjeldahl K and Smilde AK. (2008). Cross-validation of component models
 Wold S. (1978). Cross-validatory estimation of the number of components in factor and principal components models. Technometrics. 20(4):397--405.
 }
 \seealso{
-\code{\link{plotBLB}, \link{pred_LB}, \link{fitted_LB}}
+\code{\link{LogBip}, \link{pred_LB}, \link{fitted_LB}, \link{simBin}}
 }
 \author{
 Giovany Babativa <gbabativam@gmail.com>

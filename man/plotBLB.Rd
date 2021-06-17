@@ -13,7 +13,8 @@ plotBLB(
   draw = c("biplot", "ind", "var"),
   titles = NULL,
   ellipses = FALSE,
-  endsegm = 0.75
+  endsegm = 0.75,
+  repel = TRUE
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ plotBLB(
 \item{ellipses}{If \code{ellipses=TRUE}, draw confidence ellipses around the rows.}
 
 \item{endsegm}{Represents where the segment of a variable ends on the logit probability scale. By default \code{endsegm=0.75}}
+
+\item{repel}{Repel overlapping text labels.}
 }
 \value{
 Returns the Biplot of the individuals and variables.

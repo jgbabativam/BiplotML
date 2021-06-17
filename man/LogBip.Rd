@@ -44,9 +44,9 @@ LogBip(
 \item{random_start}{Logical value; whether to randomly inititalize the parameters. If \code{FALSE},
 algorithm will use an SVD as starting value.}
 
-\item{L}{Penalization parameter. By default \code{L = 0}.}
+\item{truncated}{Find the k largest singular values and vectors of a matrix.}
 
-\item{trucated}{Find the k largest singular values and vectors of a matrix.}
+\item{L}{Penalization parameter. By default \code{L = 0}.}
 }
 \value{
 Coordenates of the matrix A and B, threshold for classification rule

@@ -17,16 +17,20 @@
 #'
 #' Wold S. (1978). Cross-validatory estimation of the number of components in factor and principal components models. Technometrics. 20(4):397--405.
 #'
-#' @seealso \code{\link{plotBLB}, \link{pred_LB}, \link{fitted_LB}}
+#' @seealso \code{\link{LogBip}, \link{pred_LB}, \link{fitted_LB}, \link{simBin}}
 #' @examples
-#' data("Methylation")
-#' cv_CG <- cv_LogBip(data = Methylation, k = 0:3, method = "CG", type = 1)
+#' set.seed(1234)
+#' x <- simBin(n = 100, p = 50, k = 3, D = 0.5, C = 20)
 #' \dontrun{
-#' cv_MM <- cv_LogBip(data = Methylation, k = 0:4, method = "MM", maxit = 1000)
+#' # cross-validation with coordinate descendent MM algorithm
+#' cv_MM <- cv_LogBip(data = x$X, k=0:5, method = "MM", maxit = 1000)
+#'
+#' # cross-validation with CG Fletcher-Reeves algorithm
+#' cv_CG <- cv_LogBip(data = x$X, k=0:5, method = "CG", type = 1)
 #' }
 
-
-cv_LogBip <- function(data, k = 0:5, K = 7, method = "MM", type = NULL, plot = TRUE, maxit = NULL){
+cv_LogBip <- function(data, k = 0:5, K = 7, method = "MM", type = NULL,
+                      plot = TRUE, maxit = NULL){
 
   x <- as.matrix(data)
   min <- min(k)
@@ -108,17 +112,18 @@ cv_LogBip <- function(data, k = 0:5, K = 7, method = "MM", type = NULL, plot = T
 
 
   if(plot){
-    cvp <-   out %>%
-      pivot_longer(-k, names_to = "type.error", values_to = "error")   %>%
-      ggplot(aes(x = k, y = error, linetype = type.error, shape = type.error, color = type.error)) +
-      geom_line() +
-      geom_point(size = 3.0) +
-      geom_vline(xintercept = out[which.min(out$`cv-error`), "k"], linetype = 2) +
-      scale_color_manual(values = c("red", "blue")) +
-      labs(x = "dimensions (k)", y = "Classification error (%)")+
-      scale_x_continuous(breaks = seq(0,20,1)) +
-      theme_classic() + theme(legend.position = "top", legend.title = element_blank(),
-                              legend.text=element_text(size=11))
+    cvp <-   out |>
+      tidyr::pivot_longer(-k, names_to = "type.error", values_to = "error")   |>
+      ggplot2::ggplot(ggplot2::aes(x = k, y = error, linetype = type.error, shape = type.error, color = type.error)) +
+      ggplot2::geom_line() +
+      ggplot2::geom_point(size = 3.0) +
+      ggplot2::geom_vline(xintercept = out[which.min(out$`cv-error`), "k"], linetype = 2) +
+      ggplot2::scale_color_manual(values = c("red", "blue")) +
+      ggplot2::labs(x = "dimensions (k)", y = "Classification error (%)")+
+      ggplot2::scale_x_continuous(breaks = seq(0,20,1)) +
+      ggplot2::theme_classic() +
+      ggplot2::theme(legend.position = "top", legend.title = ggplot2::element_blank(),
+                              legend.text=ggplot2::element_text(size=11))
     print(cvp)
   }
 

@@ -1,7 +1,3 @@
-#' @import dplyr
-#' @import tidyr
-#' @import ggplot2
-#' @import ggrepel
 #' @title
 #' Plot a Binary Logistic Biplot using a BiplotML object
 #' @description
@@ -20,6 +16,7 @@
 #' @param titles Title for the Biplot
 #' @param ellipses If \code{ellipses=TRUE}, draw confidence ellipses around the rows.
 #' @param endsegm Represents where the segment of a variable ends on the logit probability scale. By default \code{endsegm=0.75}
+#' @param repel  Repel overlapping text labels.
 #' @references
 #' Meulman, J. J., & Heiser, W. J. (1983). The display of bootstrap solutions in multidimensional scaling. Murray Hill, NJ: Bell Laboratories. (Technical memorandum)
 #'
@@ -38,7 +35,7 @@
 
 plotBLB <- function(x, dim=c(1, 2), col.ind = NULL, col.var="#00AFBB",
                      label.ind = FALSE, draw = c("biplot","ind","var"), titles = NULL,
-                     ellipses = FALSE, endsegm = 0.75){
+                     ellipses = FALSE, endsegm = 0.75, repel = TRUE){
 
   EspA <- x$Ahat
   EspB <- x$Bhat
@@ -54,6 +51,27 @@ plotBLB <- function(x, dim=c(1, 2), col.ind = NULL, col.var="#00AFBB",
   EspB$y.75 = (log(endsegm/(1-endsegm))-EspB$bb0)*EspB$bb2 / rowSums(EspB[,c("bb1", "bb2")]*EspB[,c("bb1", "bb2")])
 
   colnames(EspA) <- c(paste0("Dim", seq(1,k,1)))
+
+
+  if (!requireNamespace("tidyr", quietly = TRUE)) {
+    stop("Package \"tidyr\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+
+  if (!requireNamespace("dplyr", quietly = TRUE)) {
+    stop("Package \"dplyr\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+
+  if (!requireNamespace("ggplot2", quietly = TRUE)) {
+    stop("Package \"ggplot2\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+
+  if (!requireNamespace("ggrepel", quietly = TRUE)) {
+    stop("Package \"ggrepel\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
 
   if(ellipses){
     min.plot <- floor(min(min(x$Ellip$Dimb1), min(x$Ellip$Dimb2)))
@@ -72,37 +90,45 @@ plotBLB <- function(x, dim=c(1, 2), col.ind = NULL, col.var="#00AFBB",
     if (!is.null(titles)) titulo <- titles
 
     if(is.null(col.ind)){
-      g <-  ggplot() +
-        geom_point(data=EspA, aes(x=Dim1, y=Dim2), color='#E7B800', size = 2, shape=17)+
-        geom_vline(xintercept = 0, color = "black", linetype = 2) +
-        geom_hline(yintercept = 0, color = "black", linetype = 2)  +
-        xlab("Dimension 1") + ylab("Dimension 2") +
-        xlim(min.plot, max.plot) + ylim(min.plot, max.plot) +
-        scale_color_brewer(palette="Set1") +
-        theme_bw() +
-        theme(axis.text = element_text(face = "bold"), legend.position = "none") +
-        labs(title = titulo,
+      g <- ggplot2::ggplot() +
+        ggplot2::geom_point(data=EspA, ggplot2::aes(x=Dim1, y=Dim2), color='#E7B800', size = 2, shape=17)+
+        ggplot2::geom_vline(xintercept = 0, color = "black", linetype = 2) +
+        ggplot2::geom_hline(yintercept = 0, color = "black", linetype = 2)  +
+        ggplot2::xlab("Dimension 1") + ggplot2::ylab("Dimension 2") +
+        ggplot2::xlim(min.plot, max.plot) + ggplot2::ylim(min.plot, max.plot) +
+        ggplot2::scale_color_brewer(palette="Set1") +
+        ggplot2::theme_bw() +
+        ggplot2::theme(axis.text = ggplot2::element_text(face = "bold"), legend.position = "none") +
+        ggplot2::labs(title = titulo,
              subtitle = subt,
              caption = Sys.Date()) +
-        theme(plot.title = element_text(hjust = 0.5), plot.subtitle =  element_text(hjust = 0.5))
+        ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5),
+                       plot.subtitle =  ggplot2::element_text(hjust = 0.5))
     }else{
-    g <-  ggplot() +
-      geom_point(data=EspA, aes(x=Dim1, y=Dim2, colour=col.ind), size = 2, shape=17)+
-      geom_vline(xintercept = 0, color = "black", linetype = 2) +
-      geom_hline(yintercept = 0, color = "black", linetype = 2)  +
-      xlab("Dimension 1") + ylab("Dimension 2") +
-      xlim(min.plot, max.plot) + ylim(min.plot, max.plot) +
-      scale_color_brewer(palette="Set1") +
-      theme_bw() +
-      theme(axis.text = element_text(face = "bold")) +
-      labs(title = titulo,
+    g <-  ggplot2::ggplot() +
+      ggplot2::geom_point(data=EspA, ggplot2::aes(x=Dim1, y=Dim2, colour=col.ind), size = 2, shape=17)+
+      ggplot2::geom_vline(xintercept = 0, color = "black", linetype = 2) +
+      ggplot2::geom_hline(yintercept = 0, color = "black", linetype = 2)  +
+      ggplot2::xlab("Dimension 1") + ggplot2::ylab("Dimension 2") +
+      ggplot2::xlim(min.plot, max.plot) + ggplot2::ylim(min.plot, max.plot) +
+      ggplot2::scale_color_brewer(palette="Set1") +
+      ggplot2::theme_bw() +
+      ggplot2::theme(axis.text = ggplot2::element_text(face = "bold")) +
+      ggplot2::labs(title = titulo,
            subtitle = subt,
            caption = Sys.Date()) +
-      theme(plot.title = element_text(hjust = 0.5), plot.subtitle =  element_text(hjust = 0.5))
+      ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5),
+                     plot.subtitle =  ggplot2::element_text(hjust = 0.5))
     }
     if(label.ind){
-      g <- g +
-        geom_text_repel(data=EspA, aes(x=Dim1, y=Dim2, label = rownames(EspA)), size=3.5, segment.color = "grey50")
+      if(repel){
+        g <- g +
+          ggrepel::geom_text_repel(data=EspA, ggplot2::aes(x=Dim1, y=Dim2, label = rownames(EspA)), size=3.5, segment.color = "grey50")
+      }else{
+        g <- g +
+          ggplot2::geom_text(data=EspA, ggplot2::aes(x=Dim1, y=Dim2, label = rownames(EspA)), size=3.5, segment.color = "grey50")
+      }
+
     }
   }
 
@@ -115,21 +141,23 @@ plotBLB <- function(x, dim=c(1, 2), col.ind = NULL, col.var="#00AFBB",
     if (is.null(titles)) titulo <- "Variables plot"
     if (!is.null(titles)) titulo <- titles
 
-    g <- ggplot() +
-      geom_segment(data=EspB, aes(x=x.50, y=y.50, xend=x.75, yend=y.75), arrow=arrow(angle=20,type="closed",ends="last", length=unit(0.3,"cm")), colour = col.var, show.legend=FALSE) +
-      geom_text_repel(data=EspB, aes(x=x.75, y=y.75, label = rownames(EspB),
+    g <- ggplot2::ggplot() +
+      ggplot2::geom_segment(data=EspB, ggplot2::aes(x=x.50, y=y.50, xend=x.75, yend=y.75), arrow=grid::arrow(angle=20,type="closed",ends="last", length=grid::unit(0.3,"cm")), colour = col.var, show.legend=FALSE) +
+      ggrepel::geom_text_repel(data=EspB, ggplot2::aes(x=x.75, y=y.75, label = rownames(EspB),
                                      angle = (180/pi) * atan(y.75/x.75), hjust = (1 - 2 * sign(x.75))/ 2),
                       size=3, segment.color = "grey50", vjust=0) +
-      xlab("Dimension 1") + ylab("Dimension 2") +
-      xlim(min.plot2, max.plot2) + ylim(min.plot2, max.plot2) +
-      geom_vline(xintercept = 0, color = "black", linetype = 2) +
-      geom_hline(yintercept = 0, color = "black", linetype = 2)  +
-      theme_bw() +
-      theme(axis.text = element_text(face = "bold"), legend.position = "none") +
-      labs(title = titulo,
+      ggplot2::xlab("Dimension 1") + ggplot2::ylab("Dimension 2") +
+      ggplot2::xlim(min.plot2, max.plot2) + ggplot2::ylim(min.plot2, max.plot2) +
+      ggplot2::geom_vline(xintercept = 0, color = "black", linetype = 2) +
+      ggplot2::geom_hline(yintercept = 0, color = "black", linetype = 2)  +
+      ggplot2::theme_bw() +
+      ggplot2::theme(axis.text = ggplot2::element_text(face = "bold"),
+                     legend.position = "none") +
+      ggplot2::labs(title = titulo,
            subtitle = subt,
            caption = Sys.Date()) +
-      theme(plot.title = element_text(hjust = 0.5), plot.subtitle =  element_text(hjust = 0.5))
+      ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5),
+                     plot.subtitle =  ggplot2::element_text(hjust = 0.5))
 
   }
 
@@ -138,56 +166,59 @@ plotBLB <- function(x, dim=c(1, 2), col.ind = NULL, col.var="#00AFBB",
   limit3 <- max(abs(min.plot3), abs(max.plot3))
 
   if(grap == "biplot"){
-    if (is.null(titles)) titulo <- "Bootstrap Binary Logistic Biplot"
+    if (is.null(titles)) titulo <- "Logistic Biplot"
     if (!is.null(titles)) titulo <- titles
 
     if(is.null(col.ind)){
-      g <- ggplot() +
-        geom_point(data=EspA, aes(x=Dim1, y=Dim2), color='#E7B800', size = 2, shape=17)+
-        geom_segment(data=EspB, aes(x=x.50, y=y.50, xend=x.75, yend=y.75), arrow=arrow(angle=20,type="closed",ends="last", length=unit(0.3,"cm")), colour = col.var, show.legend=FALSE) +
-        geom_text_repel(data=EspB, aes(x=x.75, y=y.75, label = rownames(EspB),
+      g <- ggplot2::ggplot() +
+        ggplot2::geom_point(data=EspA, ggplot2::aes(x=Dim1, y=Dim2), color='#E7B800', size = 2, shape=17)+
+        ggplot2::geom_segment(data=EspB, ggplot2::aes(x=x.50, y=y.50, xend=x.75, yend=y.75), arrow=grid::arrow(angle=20,type="closed",ends="last", length=grid::unit(0.3,"cm")), colour = col.var, show.legend=FALSE) +
+        ggrepel::geom_text_repel(data=EspB, ggplot2::aes(x=x.75, y=y.75, label = rownames(EspB),
                                        angle = (180/pi) * atan(y.75/x.75), hjust = (1 - 2 * sign(x.75))/ 2),
                         size=3, segment.color = "grey50", vjust=0) +
-        geom_vline(xintercept = 0, color = "black", linetype = 2) +
-        geom_hline(yintercept = 0, color = "black", linetype = 2) +
-        xlab("Dimension 1") + ylab("Dimension 2") +
-        xlim(min.plot3, max.plot3) + ylim(min.plot3, max.plot3) +
-        scale_color_brewer(palette="Set1") +
-        theme_bw() +
-        theme(axis.text = element_text(face = "bold"), legend.position = "none") +
-        labs(title = titulo,
+        ggplot2::geom_vline(xintercept = 0, color = "black", linetype = 2) +
+        ggplot2::geom_hline(yintercept = 0, color = "black", linetype = 2) +
+        ggplot2::xlab("Dimension 1") + ggplot2::ylab("Dimension 2") +
+        ggplot2::xlim(min.plot3, max.plot3) + ggplot2::ylim(min.plot3, max.plot3) +
+        ggplot2::scale_color_brewer(palette="Set1") +
+        ggplot2::theme_bw() +
+        ggplot2::theme(axis.text = ggplot2::element_text(face = "bold"),
+                       legend.position = "none") +
+        ggplot2::labs(title = titulo,
              subtitle = subt,
              caption = Sys.Date()) +
-        theme(plot.title = element_text(hjust = 0.5), plot.subtitle =  element_text(hjust = 0.5))
+        ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5),
+                       plot.subtitle =  ggplot2::element_text(hjust = 0.5))
     }else{
-    g <- ggplot() +
-      geom_point(data=EspA, aes(x=Dim1, y=Dim2, colour=col.ind), size = 2, shape=17)+
-      geom_segment(data=EspB, aes(x=x.50, y=y.50, xend=x.75, yend=y.75), arrow=arrow(angle=20,type="closed",ends="last", length=unit(0.3,"cm")), colour = col.var, show.legend=FALSE) +
-      geom_text_repel(data=EspB, aes(x=x.75, y=y.75, label = rownames(EspB),
+    g <- ggplot2::ggplot() +
+      ggplot2::geom_point(data=EspA, ggplot2::aes(x=Dim1, y=Dim2, colour=col.ind), size = 2, shape=17)+
+      ggplot2::geom_segment(data=EspB, ggplot2::aes(x=x.50, y=y.50, xend=x.75, yend=y.75), arrow=grid::arrow(angle=20,type="closed",ends="last", length=grid::unit(0.3,"cm")), colour = col.var, show.legend=FALSE) +
+      ggrepel::geom_text_repel(data=EspB, ggplot2::aes(x=x.75, y=y.75, label = rownames(EspB),
                                      angle = (180/pi) * atan(y.75/x.75), hjust = (1 - 2 * sign(x.75))/ 2),
                       size=3, segment.color = "grey50", vjust=0) +
-      geom_vline(xintercept = 0, color = "black", linetype = 2) +
-      geom_hline(yintercept = 0, color = "black", linetype = 2) +
-      xlab("Dimension 1") + ylab("Dimension 2") +
-      xlim(min.plot3, max.plot3) + ylim(min.plot3, max.plot3) +
-      scale_color_brewer(palette="Set1") +
-      theme_bw() +
-      theme(axis.text = element_text(face = "bold")) +
-      labs(title = titulo,
+      ggplot2::geom_vline(xintercept = 0, color = "black", linetype = 2) +
+      ggplot2::geom_hline(yintercept = 0, color = "black", linetype = 2) +
+      ggplot2::xlab("Dimension 1") + ggplot2::ylab("Dimension 2") +
+      ggplot2::xlim(min.plot3, max.plot3) + ggplot2::ylim(min.plot3, max.plot3) +
+      ggplot2::scale_color_brewer(palette="Set1") +
+      ggplot2::theme_bw() +
+      ggplot2::theme(axis.text = ggplot2::element_text(face = "bold")) +
+      ggplot2::labs(title = titulo,
            subtitle = subt,
            caption = Sys.Date()) +
-      theme(plot.title = element_text(hjust = 0.5), plot.subtitle =  element_text(hjust = 0.5))
+      ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5),
+                     plot.subtitle =  ggplot2::element_text(hjust = 0.5))
     }
 
     if(label.ind){
       g <- g +
-        geom_text_repel(data=EspA, aes(x=Dim1, y=Dim2, label = rownames(EspA)), size=3.5, segment.color = "grey50")
+        ggrepel::geom_text_repel(data=EspA, ggplot2::aes(x=Dim1, y=Dim2, label = rownames(EspA)), size=3.5, segment.color = "grey50")
     }
   }
 
   if(ellipses){
     g <- g +
-      geom_point(data=x$Ellip, aes(x=Dimb1, y=Dimb2, group=ind), size=0.001, colour="lightgray", shape=20)
+      ggplot2::geom_point(data=x$Ellip, ggplot2::aes(x=Dimb1, y=Dimb2, group=ind), size=0.001, colour="lightgray", shape=20)
   }
 
   return(g)

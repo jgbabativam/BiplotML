@@ -34,7 +34,7 @@
 #' @param draw The graph to draw ("ind" for the individuals, "var" for the variables and "biplot" for the row and columns coordinates in the same graph)
 #' @param random_start Logical value; whether to randomly inititalize the parameters. If \code{FALSE},
 #'   algorithm will use an SVD as starting value.
-#' @param trucated Find the k largest singular values and vectors of a matrix.
+#' @param truncated Find the k largest singular values and vectors of a matrix.
 #' @param L Penalization parameter. By default \code{L = 0}.
 #' @references
 #' Babativa-Marquez, J.G. and Vicente-Villardon, J.L. (2021). Logistic biplot by conjugate gradient algorithms and iterated SVD. Mathematics 2021.
@@ -126,13 +126,18 @@ LogBip <- function(x, k=2, method="MM", type = NULL, plot=TRUE, maxit=NULL, ends
 
   rownames(Ahat) <- rownames(x)
 
-  if(method == "MM") method <- "coordinate descendent MM"
+  if(method == "MM"){
+    method <- "coordinate descendent MM"
+    out <- list(Ahat = Ahat, Bhat = Bhat, method=method,
+                loss_function = res$loss_func, iterations = res$iterations)
+  }else{
   if(method == "CG" & type == 1) method <- "CG: Fletcher--Reeves"
   if(method == "CG" & type == 2) method <- "CG: Polak--Ribiere"
   if(method == "CG" & type == 3) method <- "CG: Beale--Sorenson"
   if(method == "Rcgmin") method <- "CG: Dai--Yuan"
-
   out <- list(Ahat = Ahat, Bhat = Bhat, method=method)
+  }
+
 
   if (plot & ncol(Ahat)>1) {
     print(plotBLB(x=out, ellipses = FALSE, endsegm = endsegm, titles = "Logistic Biplot", label.ind = label.ind, col.ind = col.ind, draw = draw))

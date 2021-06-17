@@ -19,7 +19,6 @@ sdv_MM <- function(x, k = 2, iterations = 1000, truncated = TRUE,
 
   if(k > p){
     message("The value of k must be less than the number of columns in the matrix")
-    break
   }
 
   if(!random){
@@ -30,8 +29,14 @@ sdv_MM <- function(x, k = 2, iterations = 1000, truncated = TRUE,
     }else{
       vp <- svd(scale(8 * x, center = TRUE, scale = FALSE))
     }
-    A <- vp$u[, 1:k] %*% diag(vp$d[1:k])
-    B <- vp$v[, 1:k]
+
+    if(k == 1){
+       A <- matrix(vp$u[, 1:k], n, k) * vp$d[1]
+       B <- matrix(vp$v[, 1:k], p, k)
+    }else{
+       A <- vp$u[, 1:k] %*% diag(vp$d[1:k])
+       B <- vp$v[, 1:k]
+    }
   }else{
     mu <- runif(p)
     A <- matrix(runif(n * k), n, k)
@@ -56,8 +61,13 @@ sdv_MM <- function(x, k = 2, iterations = 1000, truncated = TRUE,
     }else{
       vp <- svd(scale(Z, center = TRUE, scale = FALSE))
     }
-    A <- vp$u[, 1:k] %*% diag(vp$d[1:k])
-    B <- vp$v[, 1:k]
+    if(k == 1){
+      A <- matrix(vp$u[, 1:k], n, k) * vp$d[1]
+      B <- matrix(vp$v[, 1:k], p, k)
+    }else{
+      A <- vp$u[, 1:k] %*% diag(vp$d[1:k])
+      B <- vp$v[, 1:k]
+    }
     theta <- rep(1,n) %*% t(mu) + (A %*% t(B))
     pi <- plogis(theta)
     loss_func[i + 1] <- -sum(x * log(pi) + (1 - x) * log(1 - pi), na.rm = TRUE) / (n*p)
