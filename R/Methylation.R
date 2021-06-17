@@ -17,5 +17,5 @@
 #'   \item{DUSP22}{Dual Specificity Phosphatase 22, is a Protein Coding gene}
 #'   \item{NAPRT1}{Nicotinic Acid Phosphoribosyltransferase}
 #' }
-#' @source \url{https://www.cancerrxgene.org//}
+#' @source \url{https://www.cancerrxgene.org}
 "Methylation"

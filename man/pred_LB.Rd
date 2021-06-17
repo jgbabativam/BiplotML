@@ -22,7 +22,9 @@ The threshold for each variable is lowered to minimize.
 where \code{TP} is the number of true positives, \code{TN} is the number of true negatives, \code{FP} is the number of false positives and \code{FN} is the number of false negatives
 }
 \examples{
+\dontrun{
 data("Methylation")
 LB <- LogBip(Methylation, plot = FALSE)
 out <- pred_LB(LB, Methylation)
+}
 }

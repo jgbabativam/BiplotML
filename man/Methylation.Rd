@@ -19,7 +19,7 @@ A data frame with 48 rows and 9 variables:
 }
 }
 \source{
-\url{https://www.cancerrxgene.org//}
+\url{https://www.cancerrxgene.org}
 }
 \usage{
 Methylation

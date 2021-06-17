@@ -7,11 +7,12 @@
 #' @param type the type of fitting required. \code{type = "link"} gives output on the logit scale and
 #'  \code{type = "response"} gives output on the probability scale
 #' @examples
+#' \dontrun{
 #' data("Methylation")
 #' LB <- LogBip(Methylation, plot = FALSE)
-#'
 #' Theta <- fitted_LB(LB, type = "link")
 #' Pi <- fitted_LB(LB, type = "response")
+#' }
 #' @export fitted_LB
 
 fitted_LB <- function(object, type = c("link", "response")){

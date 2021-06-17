@@ -16,11 +16,12 @@ fitted_LB(object, type = c("link", "response"))
 Fit a lower dimentional representation of the binary matrix using logistic biplot
 }
 \examples{
+\dontrun{
 data("Methylation")
 LB <- LogBip(Methylation, plot = FALSE)
-
 Theta <- fitted_LB(LB, type = "link")
 Pi <- fitted_LB(LB, type = "response")
+}
 }
 \author{
 Giovany Babativa <gbabativam@gmail.com>
