@@ -13,7 +13,7 @@ fitted_LB(object, type = c("link", "response"))
 \code{type = "response"} gives output on the probability scale}
 }
 \description{
-Fit a lower dimentional representation of the binary matrix using logistic biplot
+Fit a lower-dimensional representation of the binary matrix using logistic biplot
 }
 \examples{
 \dontrun{

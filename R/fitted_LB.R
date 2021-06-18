@@ -1,7 +1,7 @@
 #' @title Fitted values using Logistic Biplot
 #'
 #' @description
-#' Fit a lower dimentional representation of the binary matrix using logistic biplot
+#' Fit a lower-dimensional representation of the binary matrix using logistic biplot
 #' @author Giovany Babativa <gbabativam@@gmail.com>
 #' @param object BiplotML object
 #' @param type the type of fitting required. \code{type = "link"} gives output on the logit scale and
