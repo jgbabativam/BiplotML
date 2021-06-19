@@ -1,8 +1,6 @@
 # *BiplotML*
 
-`BiplotML` is a R package for creating graphics of Biplots, based on the machine learning algorithms. This development version for the `BiplotML` package. 
-
-The objective of the package is to implement several multivariate optimization algorithms to estimate the parameters of a binary logistic biplot and graph the associated biplot.
+Logistic Biplot is a method that allows representing multivariate binary data on a subspace of low dimension, where each individual is represented by a point and each variable as vectors directed through the origin. The orthogonal projection of individuals onto these vectors predicts the expected probability that the characteristic occurs. The package contains new techniques to estimate the model parameters and constructs in each case the 'Logistic-Biplot'. References can be found in the help of each procedure.
 
 ## Installation
 
