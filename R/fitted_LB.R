@@ -1,13 +1,15 @@
-#' @title Fitted values using Logistic Biplot
-#'
+#' @title
+#' Fitted values using Logistic Biplot
 #' @description
-#' Fit a lower-dimensional representation of the binary matrix using logistic biplot
+#' Compute the predicted matrix or log-odds for a logistic biplot model
+#' @return
+#' This function returns the predicted matrix or the log-odds of a binary logistic biplot model.
 #' @author Giovany Babativa <gbabativam@@gmail.com>
 #' @param object BiplotML object
 #' @param type the type of fitting required. \code{type = "link"} gives output on the logit scale and
 #'  \code{type = "response"} gives output on the probability scale
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data("Methylation")
 #' LB <- LogBip(Methylation, plot = FALSE)
 #' Theta <- fitted_LB(LB, type = "link")

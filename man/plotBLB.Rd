@@ -8,13 +8,14 @@ plotBLB(
   x,
   dim = c(1, 2),
   col.ind = NULL,
-  col.var = "#00AFBB",
+  col.var = "#0E185F",
   label.ind = FALSE,
   draw = c("biplot", "ind", "var"),
   titles = NULL,
   ellipses = FALSE,
   endsegm = 0.75,
-  repel = TRUE
+  repel = FALSE,
+  xylim = NULL
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ plotBLB(
 \item{endsegm}{Represents where the segment of a variable ends on the logit probability scale. By default \code{endsegm=0.75}}
 
 \item{repel}{Repel overlapping text labels.}
+
+\item{xylim}{vector specifying the minimum and maximum of the x-axis and y-axis. For example, you can use xylim=c(-10, 10).}
 }
 \value{
 Returns the Biplot of the individuals and variables.
@@ -48,7 +51,7 @@ Plot the bootstrap binary logistic biplot and draw confidence ellipses on the in
 If draw = "ind", then the biplot is plotted only for individuals and if draw = "var" then is plotted only for the variables.
 }
 \examples{
-\dontrun{
+\donttest{
 data("Methylation")
 set.seed(123456)
 outBLB <- bootBLB(x = Methylation, sup = TRUE, plot=FALSE)

@@ -32,6 +32,20 @@ Coordenates of the matrix A and B, and \eqn{\mu}
 \description{
 This function estimates the vector \eqn{\mu}, matrix A and matrix B using coordinate descendent MM algorithm.
 }
+\examples{
+\donttest{
+data("Methylation")
+out <- sdv_MM(x = Methylation)
+}
+}
+\references{
+Babativa-Marquez, J. G., & Vicente-Villardon, J. L. (2021). Logistic Biplot by Conjugate Gradient Algorithms and Iterated SVD. Mathematics, 9(16).
+
+Vicente-Villardon, J.L. and Galindo, M. Purificacion (2006), \emph{Multiple Correspondence Analysis and related Methods. Chapter: Logistic Biplots}. Chapman-Hall
+}
+\seealso{
+\code{\link{cv_LogBip}}
+}
 \author{
 Giovany Babativa <gbabativam@gmail.com>
 }

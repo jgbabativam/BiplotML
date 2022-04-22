@@ -12,7 +12,16 @@
 #' @param truncated if TRUE, find the k largest singular values and vectors of a matrix.
 #' @param random random initialization
 #' @param epsilon convergence criteria
-
+#' @references
+#' Babativa-Marquez, J. G., & Vicente-Villardon, J. L. (2021). Logistic Biplot by Conjugate Gradient Algorithms and Iterated SVD. Mathematics, 9(16).
+#'
+#' Vicente-Villardon, J.L. and Galindo, M. Purificacion (2006), \emph{Multiple Correspondence Analysis and related Methods. Chapter: Logistic Biplots}. Chapman-Hall
+#' @seealso \code{\link{cv_LogBip}}
+#' @examples
+#' \donttest{
+#' data("Methylation")
+#' out <- sdv_MM(x = Methylation)
+#' }
 sdv_MM <- function(x, k = 2, iterations = 1000, truncated = TRUE,
                          random = FALSE, epsilon = 1e-4){
   n <- nrow(x); p <- ncol(x)

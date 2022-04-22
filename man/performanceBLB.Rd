@@ -27,7 +27,7 @@ This function computes the estimates of A and B matrix with severals algorithms.
 This function compare the process time and convergence of different algorithms without gradient, with gradient or quasi-newton method for estimating the parameters in a Binary Logistic Biplot
 }
 \examples{
-\dontrun{
+\donttest{
 data('Methylation')
 set.seed(123456)
 ########### Gradient Methods

@@ -9,14 +9,12 @@
 #' data frame with method, time of process, convergence and number of evaluations
 #' @details
 #' This function compare the process time and convergence of different algorithms without gradient, with gradient or quasi-newton method for estimating the parameters in a Binary Logistic Biplot
-
 #' @author Giovany Babativa <gbabativam@@gmail.com>
 #' @param xi Binary matrix.
 #' @param k Dimensions number. By default \code{k = 2}.
 #' @param L Penalization parameter. By default \code{L = 0}.
 #' @param method use value 1 for algorithms without gradient, 2 with gradient, 3 quasi-newton methods or 4 for all methods. By default \code{method = 2}.
 #' @param maxit The maximum number of iterations. Defaults to 100 for the gradient methods, and 500 without gradient.
-
 #' @references
 #' John C. Nash (2011). Unifying Optimization Algorithms to Aid Software System Users:optimx for R. Journal of Statistical Software. 43(9). 1--14.
 #'
@@ -25,7 +23,7 @@
 #' Vicente-Villardon, J.L. and Galindo, M. Purificacion (2006), \emph{Multiple Correspondence Analysis and related Methods. Chapter: Logistic Biplots}. Chapman-Hall
 #' @seealso \code{\link{gradientDesc}}
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data('Methylation')
 #' set.seed(123456)
 #' ########### Gradient Methods

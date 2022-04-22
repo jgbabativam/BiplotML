@@ -37,7 +37,7 @@
 #' Vicente-Villardon, J.L. and Galindo, M. Purificacion (2006), \emph{Multiple Correspondence Analysis and related Methods. Chapter: Logistic Biplots}. Chapman-Hall
 #' @seealso \code{\link{plotBLB}, \link{performanceBLB}}
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data("Methylation")
 #' set.seed(02052020)
 #' out.sup <- bootBLB(x = Methylation, ellipses = FALSE)
@@ -64,17 +64,14 @@ bootBLB <- function(x, k=2, L=0, method="CG", type = 1, plot=TRUE, sup=TRUE,
   }
 
   par=res$par
-  ### row coordenates
   A = data.frame(matrix(res$par[1:aik], n, k))
   colnames(A) = c(paste0("Dim", seq(1,k,1)))
   rownames(A) = rownames(x)
 
-  ### column coordinates
   B = data.frame(matrix(par[(aik + 1):dTheta], p, k+1))
   rownames(B) = colnames(x)
   colnames(B) = c(paste0("b", seq(0,k,1)))
 
-  ### bootstrap process
   Ai = A |> dplyr::mutate(rowId = dplyr::row_number())
   Bi = as.matrix(B[,1:s])
 
@@ -105,10 +102,8 @@ bootBLB <- function(x, k=2, L=0, method="CG", type = 1, plot=TRUE, sup=TRUE,
                      xt=xb, k = k, lambda = L, method = method)
     }
 
-    ### Column Coordinates
     Bb = matrix(res.b$par[(aik + 1):dTheta], p, k+1)
 
-    ### Row coordinates
     Ab = matrix(res.b$par[1:aik], n, k)
     Ab_j = data.frame(Ab, rowId=sample_ind)
     Ab_j = dplyr::distinct(Ab_j, rowId, .keep_all=T)
@@ -138,7 +133,6 @@ bootBLB <- function(x, k=2, L=0, method="CG", type = 1, plot=TRUE, sup=TRUE,
         dplyr::select(paste0("Dim", seq(1,k,1)))
       Ab = Abr |> dplyr::select(-rowId)
 
-      #--- Rotate - reflect matrix A.
       outA = procOPA(as.matrix(Ai_b), as.matrix(Ab), scale = TRUE, reflect = TRUE)
       Arot = outA$Bhat
       R = outA$R
@@ -166,7 +160,6 @@ bootBLB <- function(x, k=2, L=0, method="CG", type = 1, plot=TRUE, sup=TRUE,
   rows <- rownames(x)
   cols <- colnames(x)
 
-  # i) Expected values by rows and parameters
   EspA <- aggregate(.~ind, ResultA, mean)
   colnames(EspA) <- c("ind", paste0("Dimb", seq(1,k,1)), "resampleb")
 
@@ -178,8 +171,6 @@ bootBLB <- function(x, k=2, L=0, method="CG", type = 1, plot=TRUE, sup=TRUE,
 
 
   if(ellipses){
-    # ii.) Center Bootstrap Cloud
-
     CentBootA <-  dplyr::left_join(ResultA, EspA, by="ind")|>
       dplyr::mutate(Dim1c = Dim1-Dimb1, Dim2c=Dim2-Dimb2) |>
       dplyr::select(ind, resample, Dim1c, Dim2c)
@@ -188,24 +179,19 @@ bootBLB <- function(x, k=2, L=0, method="CG", type = 1, plot=TRUE, sup=TRUE,
       dplyr::mutate(bj0c = b0-bb0, bj1c = b1-bb1, bj2c=b2-bb2) |>
       dplyr::select(param, resample, bj0c, bj1c, bj2c)
 
-    #...... iii. iv. v.) Se hace para cada individuo
     n = nrow(EspA); p = nrow(EspB)
 
     datalist = list()
     q <- conf
     for (a in 1:n){
-      # El numero de filas no es igual en todos los casos, depende del numero de veces que salio en el
-      # proceso de remuestreo
       temp <-  dplyr::filter(CentBootA, ind == a) |>
         dplyr::select(Dim1c, Dim2c)
       sol <- svd(temp)
-      #rep = sol$u %*% diag(sol$d) %*% t(sol$v)
-      k <-  sqrt(rowSums(sol$u * sol$u))            # iii.) Distancia de cada punto boots en la base U al centroide
-      r <-  quantile(k, q)                          #  iv.) Percentil q%
-      theta  <-  seq(0, 2 * pi, length = 500)       #   v.) Angulos para aproximar elipse
+      k <-  sqrt(rowSums(sol$u * sol$u))
+      r <-  quantile(k, q)
+      theta  <-  seq(0, 2 * pi, length = 500)
       z <-  rbind(r * cos(theta), r * sin(theta))
 
-      #.... Transformación Bootstrap al espacio original
       esp  <-  dplyr::filter(EspA, ind == a) |>
         dplyr::select(-ind, -resampleb)
 
@@ -218,11 +204,10 @@ bootBLB <- function(x, k=2, L=0, method="CG", type = 1, plot=TRUE, sup=TRUE,
   }
 
 
-  LogP = as.matrix(cbind(rep(1,nrow(x)),Ahat))%*%t(Bhat) # Matriz reproducida del Log(P).
-  P = exp(LogP)/(1+exp(LogP))                            # Matriz de de probabilidades esperadas.
-  Pr = ifelse(P>=0.5, 1, 0)                              # Matriz de valores predichos
+  LogP = as.matrix(cbind(rep(1,nrow(x)),Ahat))%*%t(Bhat)
+  P = exp(LogP)/(1+exp(LogP))
+  Pr = ifelse(P>=0.5, 1, 0)
 
-  ### Porcentaje de clasificaciones correctas
   PCC = ifelse((x==1 & Pr==1) | (x==0 & Pr==0), 1, 0)
   ones <-  apply(x, 2, sum)
   zeros <- n - ones

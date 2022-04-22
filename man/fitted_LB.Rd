@@ -12,11 +12,14 @@ fitted_LB(object, type = c("link", "response"))
 \item{type}{the type of fitting required. \code{type = "link"} gives output on the logit scale and
 \code{type = "response"} gives output on the probability scale}
 }
+\value{
+This function returns the predicted matrix or the log-odds of a binary logistic biplot model.
+}
 \description{
-Fit a lower-dimensional representation of the binary matrix using logistic biplot
+Compute the predicted matrix or log-odds for a logistic biplot model
 }
 \examples{
-\dontrun{
+\donttest{
 data("Methylation")
 LB <- LogBip(Methylation, plot = FALSE)
 Theta <- fitted_LB(LB, type = "link")

@@ -16,8 +16,8 @@ LogBip(
   col.ind = NULL,
   draw = c("biplot", "ind", "var"),
   random_start = FALSE,
-  truncated = TRUE,
-  L = 0
+  L = 0,
+  cv_LogBip = FALSE
 )
 }
 \arguments{
@@ -44,45 +44,53 @@ LogBip(
 \item{random_start}{Logical value; whether to randomly inititalize the parameters. If \code{FALSE},
 algorithm will use an SVD as starting value.}
 
-\item{truncated}{Find the k largest singular values and vectors of a matrix.}
-
 \item{L}{Penalization parameter. By default \code{L = 0}.}
+
+\item{cv_LogBip}{Indicates if the procedure is being used for cross validation.}
 }
 \value{
-Coordenates of the matrix A and B, threshold for classification rule
+Coordenates of the matrix A and B, threshold for classification rule.
+Furthemore, for the PDLB method, the imputed matrix is returned.
 }
 \description{
-This function estimates the vector \eqn{\mu}, matrix A and matrix B using the optimization algorithm chosen by the user and applies a bootstrap methodology to determine the confidence ellipses.
+This function estimates the vector \eqn{\mu}, matrix A and matrix B using the optimization algorithm chosen by the user.
+The PDLB method allows to enter a binary matrix with missing data
 }
 \details{
 The methods that can be used to estimate the parameters of a logistic biplot
 
 - For methods based on the conjugate gradient use method = "CG" and
 
-      - type = 1 for the Fletcher Reeves.
-      - type = 2 for Polak Ribiere.
-      - type = 3 for Hestenes Stiefel.
-      - type = 4 for Dai Yuan.
+      type = 1 for the Fletcher Reeves; type = 2 for Polak Ribiere; type = 3 for Hestenes Stiefel and type = 4 for Dai Yuan.
 
 - To use the iterative coordinate descendent MM algorithm then method = "MM".
+
+- If the binary matrix X has missing data, use method = "PDLB". In case it's required to estimate the row coordinates of other individuals, this method is also the most appropriate. For more details see the paper "Logistic biplot with missing data".
 
 - To use the BFGS formula, method = "BFGS".
 }
 \examples{
-\dontrun{
+\donttest{
 data("Methylation")
-### Conjugate Gradient with Fletcher and Reeves method
-res <- LogBip(x = Methylation, plot = FALSE)
-### Conjugate Gradient with Polak Ribiere method
-res <- LogBip(x = Methylation, type = 2)
-### Majorization-Minimization method
-res <- LogBip(x = Methylation, method = "MM", maxit = 1000)
-### Quasi-Newton algorithm with BFGS method
-res <- LogBip(x = Methylation, method = "BFGS")
+# If the binary matrix has no missing data and does not require the projection
+# of supplementary individuals, you can use an coordinate descendent MM algorithm
+res_MM <- LogBip(x = Methylation, method = "MM", maxit = 1000)
+# If the binary matrix has missing data or requires the projection of supplementary
+#individuals, use a method based on data projection with a block coordinate descent algorithm
+data("Methylation")
+set.seed(12345)
+n <- nrow(Methylation)
+p <- ncol(Methylation)
+miss <- matrix(rbinom(n*p, 1, 0.2), n, p) #I simulate some missing data
+miss <- ifelse(miss == 1, NA, miss)
+x <- Methylation + miss  #Matrix containing missing data
+out <- LogBip(x, method = "PDLB", maxit = 1000)
 }
 }
 \references{
-Babativa-Marquez, J.G. and Vicente-Villardon, J.L. (2021). Logistic biplot by conjugate gradient algorithms and iterated SVD. Mathematics 2021.
+Babativa-Marquez, J. G., & Vicente-Villardon, J. L. (2022). Logistic biplot with missing data. In Process.
+
+Babativa-Marquez, J. G., & Vicente-Villardon, J. L. (2021). Logistic Biplot by Conjugate Gradient Algorithms and Iterated SVD. Mathematics, 9(16).
 
 John C. Nash (2011). Unifying Optimization Algorithms to Aid Software System Users:optimx for R. Journal of Statistical Software. 43(9). 1--14.
 

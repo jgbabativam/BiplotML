@@ -1,7 +1,7 @@
 Package: BiplotML
 Title: Biplots Estimation with Algorithms ML 
-Version: 1.0.1
-Date: 2021-05-30
+Version: 1.1.0
+Date: 2022-04-22
 Authors@R:
     person(given = "Jose Giovany",
            family = "Babativa-Marquez",
@@ -18,7 +18,7 @@ Description: Logistic Biplot is a method that allows representing multivariate b
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Suggests: 
     testthat,
     knitr,

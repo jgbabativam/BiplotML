@@ -54,7 +54,7 @@ This function estimates the vector \eqn{\mu}, matrix A and matrix B using the op
 Fitting when sup=TRUE ... whereas sup=FALSE ...
 }
 \examples{
-\dontrun{
+\donttest{
 data("Methylation")
 set.seed(02052020)
 out.sup <- bootBLB(x = Methylation, ellipses = FALSE)
