@@ -6,11 +6,11 @@
 #' @param x Binary matrix.
 #' @param ncuts Number of equidistant cuts between 0 and 1 that will be evaluated. By default \code{ncuts = 100}
 #' @details
-#' The threshold for each variable is lowered to minimize the Balanced Accuracy (BACC).
+#' The threshold for each variable is lowered to minimize the Balanced Error Rate (BER).
 #' \deqn{BACC = \frac{1}{2} (\frac{TP}{TP+FN} + \frac{TN}{TN+FP}),}
 #' where \code{TP} is the number of true positives, \code{TN} is the number of true negatives, \code{FP} is the number of false positives and \code{FN} is the number of false negatives
 #' @return
-#' This function returns the thresholds per variable, the predicted matrix, the confusion matrix and the BACC.
+#' This function returns the thresholds per variable, the predicted matrix, the confusion matrix and the BER.
 #' @examples
 #' \donttest{
 #' data("Methylation")
@@ -74,7 +74,7 @@ pred_LB <- function(object, x, ncuts = 100){
                            Specificity = round(100*apply((Pr == 0) & (x == 0), 2, sum, na.rm=TRUE)/ zeros, 1),
                            Global = round(100*colSums(PCC)/nrow(PCC), 1))
 
-  out <- list(thresholds = thresholds, predictX = Pr, fitted = confusion, BACC = BACC)
+  out <- list(thresholds = thresholds, predictX = Pr, fitted = confusion, BER = BACC)
   class(out) <- c("BiplotML", "list")
   return(out)
 }

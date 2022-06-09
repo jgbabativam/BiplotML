@@ -25,11 +25,11 @@
 #' @author Giovany Babativa <gbabativam@@gmail.com>
 #' @param x Binary matrix.
 #' @param k Dimensions number. By default \code{k = 2}.
-#' @param method Method to be used to estimate the parameters. By default \code{method="CG"}
+#' @param method Method to be used to estimate the parameters. By default \code{method="MM"}
 #' @param type For the conjugate-gradients method. Takes value 1 for the Fletcher–Reeves update, 2 for Polak–Ribiere and 3 for Beale–Sorenson.
-#' @param plot Plot the Bootstrap Logistic Biplot.
+#' @param plot Plot the Logistic Biplot.
 #' @param maxit The maximum number of iterations. Defaults to 100 for the gradient methods, and 500 without gradient.
-#' @param endsegm The segment starts at 0.5 and ends at this value. By default \code{endsegm = 0.90}.
+#' @param endsegm The segment starts at 0.5 and ends at this value. By default \code{endsegm = 0.75}.
 #' @param label.ind By default the row points are not labelled.
 #' @param col.ind Color for the rows marks.
 #' @param draw The graph to draw ("ind" for the individuals, "var" for the variables and "biplot" for the row and columns coordinates in the same graph)
