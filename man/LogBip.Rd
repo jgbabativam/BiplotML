@@ -25,15 +25,15 @@ LogBip(
 
 \item{k}{Dimensions number. By default \code{k = 2}.}
 
-\item{method}{Method to be used to estimate the parameters. By default \code{method="CG"}}
+\item{method}{Method to be used to estimate the parameters. By default \code{method="MM"}}
 
 \item{type}{For the conjugate-gradients method. Takes value 1 for the Fletcher–Reeves update, 2 for Polak–Ribiere and 3 for Beale–Sorenson.}
 
-\item{plot}{Plot the Bootstrap Logistic Biplot.}
+\item{plot}{Plot the Logistic Biplot.}
 
 \item{maxit}{The maximum number of iterations. Defaults to 100 for the gradient methods, and 500 without gradient.}
 
-\item{endsegm}{The segment starts at 0.5 and ends at this value. By default \code{endsegm = 0.90}.}
+\item{endsegm}{The segment starts at 0.5 and ends at this value. By default \code{endsegm = 0.75}.}
 
 \item{label.ind}{By default the row points are not labelled.}
 

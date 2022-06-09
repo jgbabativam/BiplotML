@@ -14,13 +14,13 @@ pred_LB(object, x, ncuts = 100)
 \item{ncuts}{Number of equidistant cuts between 0 and 1 that will be evaluated. By default \code{ncuts = 100}}
 }
 \value{
-This function returns the thresholds per variable, the predicted matrix, the confusion matrix and the BACC.
+This function returns the thresholds per variable, the predicted matrix, the confusion matrix and the BER.
 }
 \description{
 Predicts the binary matrix and calculates the optimal thresholds per variable that minimize the Balanced Accuracy (BACC)
 }
 \details{
-The threshold for each variable is lowered to minimize the Balanced Accuracy (BACC).
+The threshold for each variable is lowered to minimize the Balanced Error Rate (BER).
 \deqn{BACC = \frac{1}{2} (\frac{TP}{TP+FN} + \frac{TN}{TN+FP}),}
 where \code{TP} is the number of true positives, \code{TN} is the number of true negatives, \code{FP} is the number of false positives and \code{FN} is the number of false negatives
 }
