@@ -21,7 +21,7 @@ Predicts the binary matrix and calculates the optimal thresholds per variable th
 }
 \details{
 The threshold for each variable is lowered to minimize the Balanced Error Rate (BER).
-\deqn{BACC = \frac{1}{2} (\frac{TP}{TP+FN} + \frac{TN}{TN+FP}),}
+\deqn{BER = 1 - \frac{1}{2} (\frac{TP}{TP+FN} + \frac{TN}{TN+FP}),}
 where \code{TP} is the number of true positives, \code{TN} is the number of true negatives, \code{FP} is the number of false positives and \code{FN} is the number of false negatives
 }
 \examples{
