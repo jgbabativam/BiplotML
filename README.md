@@ -1,5 +1,4 @@
 ![](https://cranlogs.r-pkg.org/badges/grand-total/BiplotML)
-[![BiplotML version](https://badge.fury.io/js/BiplotML.svg)](//npmjs.com/package/BiplotML)
 
 # *BiplotML*
 
