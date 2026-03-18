@@ -9,7 +9,7 @@ The package provides several fitting algorithms:
 * **CG** — Conjugate gradient algorithms (Fletcher–Reeves, Polak–Ribière, Beale–Sorenson, Dai–Yuan).
 * **BFGS** — Broyden–Fletcher–Goldfarb–Shanno quasi-Newton method.
 
-A k-fold cross-validation function (`cv\_LogBip`) is included to help select the number of dimensions.
+A k-fold cross-validation function (`cv_LogBip`) is included to help select the number of dimensions.
 
 ## Installation
 
