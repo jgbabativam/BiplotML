@@ -6,7 +6,7 @@ Authors@R:
     person(given = "Jose Giovany",
            family = "Babativa-Marquez",
            role = c("cre", "aut"),
-           email = "gbabativam@gmail.com",
+           email = "jgbabativam@unal.edu.co",
            comment = c(ORCID = "0000-0002-4989-7459"))
 Description: Implements methods for fitting logistic biplot models to multivariate
     binary data. The logistic biplot represents individuals as points and variables
