@@ -23,7 +23,7 @@ Or install the development version from GitHub:
 
 ```r
 # install.packages("devtools")
-devtools::install\_github("jgbabativam/BiplotML")
+devtools::install_github("jgbabativam/BiplotML")
 ```
 
 ## Usage
@@ -34,22 +34,22 @@ library(BiplotML)
 data("Methylation")
 
 # Fit a logistic biplot using the MM algorithm (default)
-res\_MM <- LogBip(x = Methylation, method = "MM", maxit = 1000)
+res_MM <- LogBip(x = Methylation, method = "MM", maxit = 1000)
 
 # Fit using the PDLB algorithm (supports missing data and supplementary rows)
 set.seed(12345)
 n <- nrow(Methylation); p <- ncol(Methylation)
-miss <- matrix(rbinom(n \* p, 1, 0.2), n, p)
+miss <- matrix(rbinom(n * p, 1, 0.2), n, p)
 miss <- ifelse(miss == 1, NA, miss)
-x\_miss <- Methylation + miss
-res\_PDLB <- LogBip(x = x\_miss, method = "PDLB", maxit = 1000)
+x_miss <- Methylation + miss
+res_PDLB <- LogBip(x = x_miss, method = "PDLB", maxit = 1000)
 
 # Select the number of dimensions via cross-validation
-cv\_result <- cv\_LogBip(data = Methylation, k = 0:5, method = "MM")
+cv_result <- cv_LogBip(data = Methylation, k = 0:5, method = "MM")
 
 # Bootstrap confidence ellipses
 set.seed(02052020)
-res\_boot <- bootBLB(x = Methylation, ellipses = TRUE)
+res_boot <- bootBLB(x = Methylation, ellipses = TRUE)
 ```
 
 ## Main functions
@@ -57,13 +57,13 @@ res\_boot <- bootBLB(x = Methylation, ellipses = TRUE)
 |Function|Description|
 |-|-|
 |`LogBip()`|Fit a logistic biplot using a chosen algorithm|
-|`sdv\_MM()`|Coordinate descent MM algorithm (called internally by `LogBip`)|
-|`proj\_LogBip()`|Block coordinate descent with data projection and missing-data support|
-|`cv\_LogBip()`|Cross-validation to select the number of dimensions|
+|`sdv_MM()`|Coordinate descent MM algorithm (called internally by `LogBip`)|
+|`proj_LogBip()`|Block coordinate descent with data projection and missing-data support|
+|`cv_LogBip()`|Cross-validation to select the number of dimensions|
 |`bootBLB()`|Bootstrap logistic biplot with confidence ellipses|
 |`plotBLB()`|Plot a logistic biplot from a `BiplotML` object|
-|`pred\_LB()`|Predict binary responses and compute optimal per-variable thresholds|
-|`fitted\_LB()`|Extract fitted values on the logit or probability scale|
+|`pred_LB()`|Predict binary responses and compute optimal per-variable thresholds|
+|`fitted_LB()`|Extract fitted values on the logit or probability scale|
 |`performanceBLB()`|Compare convergence and speed across multiple optimization algorithms|
 |`gradientDesc()`|Fit a logistic biplot via simple gradient descent|
 |`simBin()`|Simulate a binary data matrix from a latent variable model|
@@ -73,7 +73,7 @@ res\_boot <- bootBLB(x = Methylation, ellipses = TRUE)
 If you use BiplotML in your research, please cite:
 
 > Babativa-Márquez, J. G., \& Vicente-Villardón, J. L. (2021). Logistic biplot by
-> conjugate gradient algorithms and iterated SVD. \*Mathematics\*, \*9\*(16), 2015.
+> conjugate gradient algorithms and iterated SVD. *Mathematics*, *9*(16), 2015.
 > <https://doi.org/10.3390/math9162015>
 
 ## Author
