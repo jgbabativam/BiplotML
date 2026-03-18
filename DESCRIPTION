@@ -8,19 +8,21 @@ Authors@R:
            role = c("cre", "aut"),
            email = "jgbabativam@unal.edu.co",
            comment = c(ORCID = "0000-0002-4989-7459"))
-Description: Implements methods for fitting logistic biplot models to multivariate
-    binary data. The logistic biplot represents individuals as points and variables
-    as directed vectors in a low-dimensional subspace; the orthogonal projection
-    of a point onto a variable vector approximates the expected probability that
-    the corresponding characteristic is present. Available fitting methods include
-    conjugate gradient algorithms, a coordinate descent Majorization-Minimization
+Description: Implements methods for fitting logistic biplot models to
+    multivariate binary data. The logistic biplot represents individuals
+    as points and binary variables as directed vectors in a low-dimensional
+    subspace; the orthogonal projection of each individual onto a variable
+    vector approximates the expected probability that the corresponding
+    characteristic is present. Available fitting methods include conjugate
+    gradient algorithms, a coordinate descent Majorization-Minimization
     (MM) algorithm, and a block coordinate descent algorithm based on data
     projection that supports matrices with missing values and allows new
-    individuals to be projected as supplementary rows without refitting the model.
-    A cross-validation procedure is provided to select the number of dimensions k.
+    individuals to be projected as supplementary rows without refitting
+    the model. A cross-validation procedure is provided to select the
+    number of latent dimensions k.
     References: Babativa-Marquez and Vicente-Villardon (2021)
-    <doi:10.3390/math9162015>; Vicente-Villardon and Galindo (2006,
-    ISBN:9780470973196).
+    <doi:10.3390/math9162015>;
+    Vicente-Villardon and Galindo (2006, ISBN:9780470973196).
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
