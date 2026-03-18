@@ -72,8 +72,8 @@ res_boot <- bootBLB(x = Methylation, ellipses = TRUE)
 
 If you use BiplotML in your research, please cite:
 
-> Babativa-Márquez, J. G., \\\& Vicente-Villardón, J. L. (2021). Logistic biplot by
-> conjugate gradient algorithms and iterated SVD. \\\*Mathematics\\\*, \\\*9\\\*(16), 2015.
+> Babativa-Márquez, J. G., \& Vicente-Villardón, J. L. (2021). Logistic biplot by
+> conjugate gradient algorithms and iterated SVD. *Mathematics*, *9*(16), 2015.
 > <https://doi.org/10.3390/math9162015>
 
 ## Author
