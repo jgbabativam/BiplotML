@@ -2,34 +2,39 @@
 % Please edit documentation in R/simBin.R
 \name{simBin}
 \alias{simBin}
-\title{Multivariate binary data}
+\title{Simulate a Multivariate Binary Matrix}
 \usage{
 simBin(n, p, k, D, C = 1)
 }
 \arguments{
-\item{n}{number of rows}
+\item{n}{Number of rows (individuals).}
 
-\item{p}{number of columns}
+\item{p}{Number of columns (variables).}
 
-\item{k}{number of underlying dimensions in the model}
+\item{k}{Number of underlying latent dimensions.}
 
-\item{D}{sparsity control}
+\item{D}{Sparsity control: the marginal probability of a 1 in the population.
+A value close to 0 or 1 yields a sparse or dense matrix, respectively.}
 
-\item{C}{variance control}
+\item{C}{Variance scaling factor for the row scores. Default is \code{C = 1}.}
 }
 \value{
-X: binary matrix,
-P: predicted matrix,
-Theta: matrix of natural parameters,
-A: row markers,
-B: column markers,
-mu: offset term,
-D: sparsity level,
-n: number of rows,
-p: number of columns
+A named list with components:
+  \describe{
+    \item{\code{X}}{Simulated binary matrix (\eqn{n \times p}).}
+    \item{\code{P}}{Matrix of true Bernoulli probabilities (\eqn{n \times p}).}
+    \item{\code{Theta}}{Matrix of true log-odds (natural parameters).}
+    \item{\code{A}}{True row-marker matrix (\eqn{n \times k}).}
+    \item{\code{B}}{True column-marker matrix (\eqn{p \times k}), orthonormal.}
+    \item{\code{mu}}{True intercept vector of length \eqn{p}.}
+    \item{\code{D}}{Observed proportion of ones in \strong{X}.}
+    \item{\code{n}}{Number of rows.}
+    \item{\code{p}}{Number of columns.}
+  }
 }
 \description{
-Simulate a binary data matrix based on a latent variables model
+Simulates a binary data matrix from a logistic biplot latent variable model
+with known parameters, useful for benchmarking and cross-validation studies.
 }
 \examples{
 x <- simBin(n = 100, p = 50, k = 3, D = 0.5)

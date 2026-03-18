@@ -2,7 +2,7 @@
 % Please edit documentation in R/LogBip.R
 \name{LogBip}
 \alias{LogBip}
-\title{Fitting a Binary Logistic Biplot using optimization methods}
+\title{Fit a Binary Logistic Biplot}
 \usage{
 LogBip(
   x,
@@ -21,88 +21,128 @@ LogBip(
 )
 }
 \arguments{
-\item{x}{Binary matrix.}
+\item{x}{A binary matrix (or a matrix with \code{NA} values when
+\code{method = "PDLB"}).}
 
-\item{k}{Dimensions number. By default \code{k = 2}.}
+\item{k}{Number of dimensions. Default is \code{k = 2}.}
 
-\item{method}{Method to be used to estimate the parameters. By default \code{method="MM"}}
+\item{method}{Fitting algorithm. One of \code{"MM"} (default), \code{"CG"},
+\code{"PDLB"}, or \code{"BFGS"}.}
 
-\item{type}{For the conjugate-gradients method. Takes value 1 for the Fletcher–Reeves update, 2 for Polak–Ribiere and 3 for Beale–Sorenson.}
+\item{type}{Update formula for the conjugate gradient method: \code{1} =
+Fletcher--Reeves, \code{2} = Polak--Ribiere, \code{3} = Beale--Sorenson.
+Ignored for other methods.}
 
-\item{plot}{Plot the Logistic Biplot.}
+\item{plot}{Logical; if \code{TRUE} (default), the logistic biplot is plotted
+after fitting.}
 
-\item{maxit}{The maximum number of iterations. Defaults to 100 for the gradient methods, and 500 without gradient.}
+\item{maxit}{Maximum number of iterations. Defaults to \code{100} for gradient
+methods and \code{500} for derivative-free methods.}
 
-\item{endsegm}{The segment starts at 0.5 and ends at this value. By default \code{endsegm = 0.75}.}
+\item{endsegm}{End point of the variable segment on the probability scale.
+The segment starts at 0.5 and ends at this value. Default is \code{0.90}.}
 
-\item{label.ind}{By default the row points are not labelled.}
+\item{label.ind}{Logical; if \code{TRUE}, row points are labelled. Default is
+\code{FALSE}.}
 
-\item{col.ind}{Color for the rows marks.}
+\item{col.ind}{Color for the row markers. Passed to \code{\link{plotBLB}}.}
 
-\item{draw}{The graph to draw ("ind" for the individuals, "var" for the variables and "biplot" for the row and columns coordinates in the same graph)}
+\item{draw}{Which graph to draw: \code{"biplot"} (default) for both rows and
+columns, \code{"ind"} for individuals only, or \code{"var"} for variables
+only.}
 
-\item{random_start}{Logical value; whether to randomly inititalize the parameters. If \code{FALSE},
-algorithm will use an SVD as starting value.}
+\item{random_start}{Logical; if \code{TRUE}, parameters are initialised
+randomly. If \code{FALSE} (default), an SVD-based initialisation is used.}
 
-\item{L}{Penalization parameter. By default \code{L = 0}.}
+\item{L}{Ridge penalization parameter. Default is \code{L = 0} (no penalty).}
 
-\item{cv_LogBip}{Indicates if the procedure is being used for cross validation.}
+\item{cv_LogBip}{Logical; indicates whether the function is being called
+internally by \code{\link{cv_LogBip}}. Users should leave this as
+\code{FALSE} (default).}
 }
 \value{
-Coordenates of the matrix A and B, threshold for classification rule.
-Furthemore, for the PDLB method, the imputed matrix is returned.
+An object of class \code{BiplotML} (a named list) containing:
+  \describe{
+    \item{\code{Ahat}}{Data frame of row-marker coordinates.}
+    \item{\code{Bhat}}{Data frame of column-marker coordinates, including the
+      intercept column \code{bb0}.}
+    \item{\code{method}}{Character string identifying the fitting method used.}
+    \item{\code{loss_function}}{Vector of loss-function values at each
+      iteration (MM and PDLB methods only).}
+    \item{\code{iterations}}{Number of iterations performed (MM and PDLB
+      methods only).}
+    \item{\code{impute_x}}{Imputed binary matrix (PDLB method only).}
+  }
 }
 \description{
-This function estimates the vector \eqn{\mu}, matrix A and matrix B using the optimization algorithm chosen by the user.
-The PDLB method allows to enter a binary matrix with missing data
+Estimates the intercept vector \eqn{\mu}, the row-marker matrix \strong{A}, and the
+column-marker matrix \strong{B} of a logistic biplot model using the optimization
+algorithm selected by the user.
 }
 \details{
-The methods that can be used to estimate the parameters of a logistic biplot
+The following fitting methods are available:
 
-- For methods based on the conjugate gradient use method = "CG" and
+\strong{Conjugate gradient (CG):} Set \code{method = "CG"} and choose the update
+formula via \code{type}:
+\itemize{
+  \item \code{type = 1} --- Fletcher--Reeves
+  \item \code{type = 2} --- Polak--Ribiere
+  \item \code{type = 3} --- Hestenes--Stiefel
+  \item \code{type = 4} --- Dai--Yuan
+}
 
-      type = 1 for the Fletcher Reeves; type = 2 for Polak Ribiere; type = 3 for Hestenes Stiefel and type = 4 for Dai Yuan.
+\strong{Coordinate descent MM:} Set \code{method = "MM"} to use the iterative
+coordinate descent Majorization-Minimization algorithm.
 
-- To use the iterative coordinate descendent MM algorithm then method = "MM".
+\strong{Projection-based algorithm (PDLB):} Set \code{method = "PDLB"} when the
+binary matrix contains missing values, or when the row coordinates of new
+(supplementary) individuals need to be estimated without refitting the model.
+See Babativa-Marquez & Vicente-Villardon (2022) for details.
 
-- If the binary matrix X has missing data, use method = "PDLB". In case it's required to estimate the row coordinates of other individuals, this method is also the most appropriate. For more details see the paper "Logistic biplot with missing data".
-
-- To use the BFGS formula, method = "BFGS".
+\strong{BFGS:} Set \code{method = "BFGS"} to use the Broyden--Fletcher--
+Goldfarb--Shanno quasi-Newton method.
 }
 \examples{
 \donttest{
 data("Methylation")
-# If the binary matrix has no missing data and does not require the projection
-# of supplementary individuals, you can use an coordinate descendent MM algorithm
+
+# Fit using the coordinate descent MM algorithm
 res_MM <- LogBip(x = Methylation, method = "MM", maxit = 1000)
-# If the binary matrix has missing data or requires the projection of supplementary
-#individuals, use a method based on data projection with a block coordinate descent algorithm
-data("Methylation")
+
+# Fit using the PDLB algorithm with simulated missing data
 set.seed(12345)
-n <- nrow(Methylation)
-p <- ncol(Methylation)
-miss <- matrix(rbinom(n*p, 1, 0.2), n, p) #I simulate some missing data
+n <- nrow(Methylation); p <- ncol(Methylation)
+miss <- matrix(rbinom(n * p, 1, 0.2), n, p)
 miss <- ifelse(miss == 1, NA, miss)
-x <- Methylation + miss  #Matrix containing missing data
-out <- LogBip(x, method = "PDLB", maxit = 1000)
+x_miss <- Methylation + miss
+res_PDLB <- LogBip(x = x_miss, method = "PDLB", maxit = 1000)
 }
 }
 \references{
-Babativa-Marquez, J. G., & Vicente-Villardon, J. L. (2022). Logistic biplot with missing data. In Process.
+Babativa-Marquez, J. G., & Vicente-Villardon, J. L. (2022). Logistic biplot
+with missing data. \emph{In process}.
 
-Babativa-Marquez, J. G., & Vicente-Villardon, J. L. (2021). Logistic Biplot by Conjugate Gradient Algorithms and Iterated SVD. Mathematics, 9(16).
+Babativa-Marquez, J. G., & Vicente-Villardon, J. L. (2021). Logistic biplot
+by conjugate gradient algorithms and iterated SVD. \emph{Mathematics},
+\emph{9}(16), 2015. \doi{10.3390/math9162015}
 
-John C. Nash (2011). Unifying Optimization Algorithms to Aid Software System Users:optimx for R. Journal of Statistical Software. 43(9). 1--14.
+Nash, J. C. (2011). Unifying optimization algorithms to aid software system
+users: optimx for R. \emph{Journal of Statistical Software}, \emph{43}(9),
+1--14.
 
-John C. Nash (2014). On Best Practice Optimization Methods in R. Journal of Statistical Software. 60(2). 1--14.
+Nash, J. C. (2014). On best practice optimization methods in R.
+\emph{Journal of Statistical Software}, \emph{60}(2), 1--14.
 
-Nocedal, J.;Wright, S. (2006). Numerical optimization; Springer Science & Business Media.
+Nocedal, J., & Wright, S. (2006). \emph{Numerical Optimization} (2nd ed.).
+Springer.
 
-Vicente-Villardon, J.L. and Galindo, M. Purificacion (2006), \emph{Multiple Correspondence Analysis and related Methods. Chapter: Logistic Biplots}. Chapman-Hall
+Vicente-Villardon, J. L., & Galindo, M. P. (2006). Logistic biplots. In
+M. Greenacre & J. Blasius (Eds.), \emph{Multiple Correspondence Analysis and
+Related Methods} (pp. 503--521). Chapman & Hall.
 }
 \seealso{
-\code{\link{plotBLB}, \link{pred_LB}, \link{fitted_LB}}
+\code{\link{plotBLB}}, \code{\link{pred_LB}}, \code{\link{fitted_LB}}
 }
 \author{
-Giovany Babativa <gbabativam@gmail.com>
+Giovany Babativa <jgbabativam@unal.edu.co>
 }

@@ -1,10 +1,20 @@
-citHeader("To cite BiplotML in publications use:")
+citHeader("To cite BiplotML in publications, please use:")
 
-citEntry(
-  entry    = "Manual",
-  title    = "BiplotML: Biplots Estimation with Machine Learning Algorithms",
-  author   = "Babativa J.G",
-  year     = "2020",
-  url      = "https://github.com/jgbabativam/",
-textVersion = paste("Babativa, JG", "BiplotML: Biplots Estimation with Machine Learning Algorithms")
+bibentry(
+  bibtype  = "Article",
+  title    = "Logistic Biplot by Conjugate Gradient Algorithms and Iterated SVD",
+  author   = c(person("Jose Giovany", "Babativa-Marquez"),
+               person("Jose Luis",    "Vicente-Villardon")),
+  journal  = "Mathematics",
+  year     = "2021",
+  volume   = "9",
+  number   = "16",
+  pages    = "2015",
+  doi      = "10.3390/math9162015",
+  textVersion = paste(
+    "Babativa-Marquez, J. G., & Vicente-Villardon, J. L. (2021).",
+    "Logistic biplot by conjugate gradient algorithms and iterated SVD.",
+    "Mathematics, 9(16), 2015.",
+    "https://doi.org/10.3390/math9162015"
+  )
 )

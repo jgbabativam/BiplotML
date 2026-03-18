@@ -2,7 +2,7 @@
 % Please edit documentation in R/SVD_MM.R
 \name{sdv_MM}
 \alias{sdv_MM}
-\title{Fitting a Binary Logistic Biplot using coordinate descendent MM algorithm}
+\title{Fit a Binary Logistic Biplot via Coordinate Descent MM Algorithm}
 \usage{
 sdv_MM(
   x,
@@ -14,23 +14,37 @@ sdv_MM(
 )
 }
 \arguments{
-\item{x}{binary matrix.}
+\item{x}{A binary matrix with no missing values.}
 
-\item{k}{dimensions number. By default \code{k = 2}.}
+\item{k}{Number of dimensions. Default is \code{k = 2}.}
 
-\item{iterations}{maximum iterations.}
+\item{iterations}{Maximum number of iterations. Default is \code{1000}.}
 
-\item{truncated}{if TRUE, find the k largest singular values and vectors of a matrix.}
+\item{truncated}{Logical; if \code{TRUE} (default for large matrices), the
+truncated SVD from \pkg{RSpectra} is used to speed up computation.}
 
-\item{random}{random initialization}
+\item{random}{Logical; if \code{TRUE}, parameters are initialised randomly.
+Default is \code{FALSE} (SVD initialisation).}
 
-\item{epsilon}{convergence criteria}
+\item{epsilon}{Convergence tolerance. The algorithm stops when the relative
+decrease in the loss function is below this value. Default is \code{1e-4}.}
 }
 \value{
-Coordenates of the matrix A and B, and \eqn{\mu}
+A named list with components:
+  \describe{
+    \item{\code{mu}}{Estimated intercept vector of length \eqn{p}.}
+    \item{\code{A}}{Estimated row-marker matrix (\eqn{n \times k}).}
+    \item{\code{B}}{Estimated column-marker matrix (\eqn{p \times k}).}
+    \item{\code{iterations}}{Number of iterations performed.}
+    \item{\code{loss_func}}{Vector of normalised loss-function values at each
+      iteration.}
+  }
 }
 \description{
-This function estimates the vector \eqn{\mu}, matrix A and matrix B using coordinate descendent MM algorithm.
+Estimates the intercept vector \eqn{\mu}, the row-marker matrix \strong{A},
+and the column-marker matrix \strong{B} using an iterative coordinate descent
+Majorization-Minimization (MM) algorithm. This is the low-level function
+called by \code{\link{LogBip}} when \code{method = "MM"}.
 }
 \examples{
 \donttest{
@@ -39,13 +53,17 @@ out <- sdv_MM(x = Methylation)
 }
 }
 \references{
-Babativa-Marquez, J. G., & Vicente-Villardon, J. L. (2021). Logistic Biplot by Conjugate Gradient Algorithms and Iterated SVD. Mathematics, 9(16).
+Babativa-Marquez, J. G., & Vicente-Villardon, J. L. (2021). Logistic biplot
+by conjugate gradient algorithms and iterated SVD. \emph{Mathematics},
+\emph{9}(16), 2015. \doi{10.3390/math9162015}
 
-Vicente-Villardon, J.L. and Galindo, M. Purificacion (2006), \emph{Multiple Correspondence Analysis and related Methods. Chapter: Logistic Biplots}. Chapman-Hall
+Vicente-Villardon, J. L., & Galindo, M. P. (2006). Logistic biplots. In
+M. Greenacre & J. Blasius (Eds.), \emph{Multiple Correspondence Analysis and
+Related Methods} (pp. 503--521). Chapman & Hall.
 }
 \seealso{
-\code{\link{cv_LogBip}}
+\code{\link{LogBip}}, \code{\link{cv_LogBip}}
 }
 \author{
-Giovany Babativa <gbabativam@gmail.com>
+Giovany Babativa <jgbabativam@unal.edu.co>
 }

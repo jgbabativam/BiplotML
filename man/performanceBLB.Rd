@@ -2,60 +2,82 @@
 % Please edit documentation in R/performanceBLB.R
 \name{performanceBLB}
 \alias{performanceBLB}
-\title{Performance comparison of severals estimation algorithms}
+\title{Compare Optimization Algorithms for Binary Logistic Biplot Estimation}
 \usage{
 performanceBLB(xi, k = 2, L = 0, method = NULL, maxit = NULL)
 }
 \arguments{
-\item{xi}{Binary matrix.}
+\item{xi}{A binary matrix.}
 
-\item{k}{Dimensions number. By default \code{k = 2}.}
+\item{k}{Number of dimensions. Default is \code{k = 2}.}
 
-\item{L}{Penalization parameter. By default \code{L = 0}.}
+\item{L}{Ridge penalization parameter. Default is \code{L = 0}.}
 
-\item{method}{use value 1 for algorithms without gradient, 2 with gradient, 3 quasi-newton methods or 4 for all methods. By default \code{method = 2}.}
+\item{method}{Algorithm group to compare: \code{1} (derivative-free),
+\code{2} (gradient, default), \code{3} (quasi-Newton), or \code{4} (all).}
 
-\item{maxit}{The maximum number of iterations. Defaults to 100 for the gradient methods, and 500 without gradient.}
+\item{maxit}{Maximum number of iterations per algorithm.}
 }
 \value{
-data frame with method, time of process, convergence and number of evaluations
+A data frame with one row per algorithm and columns:
+  \describe{
+    \item{\code{method}}{Algorithm name.}
+    \item{\code{evaluat}}{Final value of the objective function.}
+    \item{\code{convergence}}{Convergence status.}
+    \item{\code{fevals}}{Number of function evaluations.}
+    \item{\code{time}}{Elapsed computation time.}
+  }
 }
 \description{
-This function computes the estimates of A and B matrix with severals algorithms.
+Fits the binary logistic biplot model using multiple optimization algorithms
+and returns a summary of their computation time, convergence status, and
+number of function evaluations, facilitating algorithm selection.
 }
 \details{
-This function compare the process time and convergence of different algorithms without gradient, with gradient or quasi-newton method for estimating the parameters in a Binary Logistic Biplot
+The following algorithm groups are available via the \code{method} argument:
+\itemize{
+  \item \code{1} --- Derivative-free methods: Nelder-Mead, UOBYQA, NEWUOA.
+  \item \code{2} --- Gradient methods (default): CG, Rcgmin.
+  \item \code{3} --- Quasi-Newton methods: BFGS, L-BFGS-B, nlm, nlminb.
+  \item \code{4} --- All of the above.
+}
 }
 \examples{
 \donttest{
-data('Methylation')
+data("Methylation")
 set.seed(123456)
-########### Gradient Methods
+
+# Gradient methods (default)
 performanceBLB(xi = Methylation)
 performanceBLB(xi = Methylation, maxit = 150)
 
-########### Without Gradient Methods
+# Derivative-free methods
 performanceBLB(xi = Methylation, method = 1)
 performanceBLB(xi = Methylation, method = 1, maxit = 100)
 
-########### Quasi-Newton Methods
+# Quasi-Newton methods
 performanceBLB(xi = Methylation, method = 3)
 performanceBLB(xi = Methylation, method = 3, maxit = 100)
 
-########### All methods
-performanceBLB(x = Methylation, method = 4)
+# All methods
+performanceBLB(xi = Methylation, method = 4)
 }
 }
 \references{
-John C. Nash (2011). Unifying Optimization Algorithms to Aid Software System Users:optimx for R. Journal of Statistical Software. 43(9). 1--14.
+Nash, J. C. (2011). Unifying optimization algorithms to aid software system
+users: optimx for R. \emph{Journal of Statistical Software}, \emph{43}(9),
+1--14.
 
-John C. Nash (2014). On Best Practice Optimization Methods in R. Journal of Statistical Software. 60(2). 1--14.
+Nash, J. C. (2014). On best practice optimization methods in R.
+\emph{Journal of Statistical Software}, \emph{60}(2), 1--14.
 
-Vicente-Villardon, J.L. and Galindo, M. Purificacion (2006), \emph{Multiple Correspondence Analysis and related Methods. Chapter: Logistic Biplots}. Chapman-Hall
+Vicente-Villardon, J. L., & Galindo, M. P. (2006). Logistic biplots. In
+M. Greenacre & J. Blasius (Eds.), \emph{Multiple Correspondence Analysis and
+Related Methods} (pp. 503--521). Chapman & Hall.
 }
 \seealso{
 \code{\link{gradientDesc}}
 }
 \author{
-Giovany Babativa <gbabativam@gmail.com>
+Giovany Babativa <jgbabativam@unal.edu.co>
 }

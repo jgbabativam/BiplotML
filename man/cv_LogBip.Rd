@@ -2,7 +2,7 @@
 % Please edit documentation in R/cv_LogBip.R
 \name{cv_LogBip}
 \alias{cv_LogBip}
-\title{Cross-Validation for logistic biplot}
+\title{Cross-Validation for Logistic Biplot}
 \usage{
 cv_LogBip(
   data,
@@ -15,48 +15,60 @@ cv_LogBip(
 )
 }
 \arguments{
-\item{data}{Binary matrix.}
+\item{data}{A binary matrix.}
 
-\item{k}{Dimensions to analyze. By default \code{k = 1:3}.}
+\item{k}{Integer vector of dimensions to evaluate. Default is \code{0:5}.}
 
-\item{K}{folds. By default \code{K = 7}.}
+\item{K}{Number of folds. Default is \code{K = 7}.}
 
-\item{method}{Method to be used to estimate the parameters. By default \code{ method="MM"}}
+\item{method}{Fitting algorithm: \code{"MM"} (default), \code{"CG"},
+\code{"PDLB"}, or \code{"BFGS"}.}
 
-\item{type}{For the conjugate-gradients method. Takes value 1 for the Fletcher–Reeves update, 2 for Polak–Ribiere and 3 for Beale–Sorenson.}
+\item{type}{Update formula for the CG method (see \code{\link{LogBip}}).}
 
-\item{plot}{draw the graph. By default \code{plot=TRUE}}
+\item{plot}{Logical; if \code{TRUE} (default), the cross-validation error
+curve is plotted.}
 
-\item{maxit}{The maximum number of iterations. Defaults to 100 for the gradient methods, and 2000 for MM algorithm.}
+\item{maxit}{Maximum number of iterations. Defaults to \code{100} for
+gradient methods and \code{2000} for the MM algorithm.}
 }
 \value{
-Training error and generalization error for a logistic biplot model.
+A data frame with columns \code{k}, \code{cv-error} (mean
+  cross-validation error, in percent), and \code{train-error} (mean training
+  error, in percent).
 }
 \description{
-This function run cross-validation for logistic biplot
+Performs k-fold cross-validation for a logistic biplot model across a range
+of dimensions, enabling selection of the optimal number of latent dimensions.
 }
 \examples{
 \donttest{
 set.seed(1234)
 x <- simBin(n = 100, p = 50, k = 3, D = 0.5, C = 20)
-# cross-validation with coordinate descendent MM algorithm
-cv_MM <- cv_LogBip(data = x$X, k=0:5, method = "MM", maxit = 1000)
 
-# cross-validation with CG Fletcher-Reeves algorithm
-cv_CG <- cv_LogBip(data = x$X, k=0:5, method = "CG", type = 1)
+# Cross-validation using the MM algorithm
+cv_MM <- cv_LogBip(data = x$X, k = 0:5, method = "MM", maxit = 1000)
 
-# cross-validation with projection data and block coordinate descending algorithm
-cv_PB <- cv_LogBip(data = x$X, k=0:5, method = "PDLB", maxit = 1000)
+# Cross-validation using the Fletcher-Reeves CG algorithm
+cv_CG <- cv_LogBip(data = x$X, k = 0:5, method = "CG", type = 1)
+
+# Cross-validation using the PDLB algorithm
+cv_PB <- cv_LogBip(data = x$X, k = 0:5, method = "PDLB", maxit = 1000)
 }
 }
 \references{
-Bro R and Kjeldahl K and Smilde AK. (2008). Cross-validation of component models: a critical look at current methods. Analytical and bioanalytical chemistry. 390(5):1241-1251
+Bro, R., Kjeldahl, K., & Smilde, A. K. (2008). Cross-validation of component
+models: a critical look at current methods. \emph{Analytical and Bioanalytical
+Chemistry}, \emph{390}(5), 1241--1251.
 
-Wold S. (1978). Cross-validatory estimation of the number of components in factor and principal components models. Technometrics. 20(4):397--405.
+Wold, S. (1978). Cross-validatory estimation of the number of components in
+factor and principal components models. \emph{Technometrics}, \emph{20}(4),
+397--405.
 }
 \seealso{
-\code{\link{LogBip}, \link{pred_LB}, \link{fitted_LB}, \link{simBin}}
+\code{\link{LogBip}}, \code{\link{pred_LB}}, \code{\link{fitted_LB}},
+  \code{\link{simBin}}
 }
 \author{
-Giovany Babativa <gbabativam@gmail.com>
+Giovany Babativa <jgbabativam@unal.edu.co>
 }

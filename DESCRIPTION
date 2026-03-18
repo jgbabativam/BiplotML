@@ -1,29 +1,40 @@
 Package: BiplotML
-Title: Biplots Estimation with Algorithms ML 
-Version: 1.1.0
-Date: 2022-04-22
+Title: Logistic Biplot Estimation Using Machine Learning Algorithms
+Version: 1.1.1
+Date: 2026-03-17
 Authors@R:
     person(given = "Jose Giovany",
            family = "Babativa-Marquez",
            role = c("cre", "aut"),
            email = "gbabativam@gmail.com",
            comment = c(ORCID = "0000-0002-4989-7459"))
-Maintainer: Jose Giovany Babativa-Marquez <gbabativam@gmail.com>           
-Depends:
-    R (>= 4.1),
-    optimr,
-    optimx,
-    shapes
-Description: Logistic Biplot is a method that allows representing multivariate binary data on a subspace of low dimension, where each individual is represented by a point and each variable as vectors directed through the origin. The orthogonal projection of individuals onto these vectors predicts the expected probability that the characteristic occurs. The package contains new techniques to estimate the model parameters and constructs in each case the 'Logistic-Biplot'. References can be found in the help of each procedure.
+Description: Implements methods for fitting logistic biplot models to multivariate
+    binary data. The logistic biplot represents individuals as points and variables
+    as directed vectors in a low-dimensional subspace; the orthogonal projection
+    of a point onto a variable vector approximates the expected probability that
+    the corresponding characteristic is present. Available fitting methods include
+    conjugate gradient algorithms, a coordinate descent Majorization-Minimization
+    (MM) algorithm, and a block coordinate descent algorithm based on data
+    projection that supports matrices with missing values and allows new
+    individuals to be projected as supplementary rows without refitting the model.
+    A cross-validation procedure is provided to select the number of dimensions k.
+    References: Babativa-Marquez and Vicente-Villardon (2021)
+    <doi:10.3390/math9162015>; Vicente-Villardon and Galindo (2006,
+    ISBN:9780470973196).
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.2
-Suggests: 
-    testthat,
+RoxygenNote: 7.3.3
+Depends:
+    R (>= 4.1.0)
+Imports:
+    optimx,
+    shapes,
+    RSpectra
+Suggests:
+    testthat (>= 3.0.0),
     knitr,
     rmarkdown,
-    RSpectra,
     dplyr (>= 1.0.0),
     tidyr (>= 1.1.0),
     ggplot2 (>= 3.3.2),
@@ -32,3 +43,4 @@ Suggests:
     mvtnorm
 URL: https://github.com/jgbabativam/BiplotML
 BugReports: https://github.com/jgbabativam/BiplotML/issues
+VignetteBuilder: knitr

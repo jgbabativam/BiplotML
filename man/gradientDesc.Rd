@@ -2,7 +2,7 @@
 % Please edit documentation in R/gradientDesc.R
 \name{gradientDesc}
 \alias{gradientDesc}
-\title{Gradient function for Binary Logistic Biplot}
+\title{Fit a Binary Logistic Biplot via Gradient Descent}
 \usage{
 gradientDesc(
   x,
@@ -15,42 +15,65 @@ gradientDesc(
 )
 }
 \arguments{
-\item{x}{Binary matrix.}
+\item{x}{A binary matrix.}
 
-\item{k}{Dimensions number. By default \code{k = 2}.}
+\item{k}{Number of dimensions. Default is \code{k = 2}.}
 
-\item{rate}{The value of the rate of descent \eqn{\alpha} in the algorithm of descending gradient. By default \eqn{\alpha = 0.001}.}
+\item{rate}{Learning rate \eqn{\alpha} for the gradient descent update.
+Default is \code{0.001}.}
 
-\item{converg}{Tolerance limit to achieve convergence. By default \code{converg = 0.001}}
+\item{converg}{Convergence tolerance: the algorithm stops when the relative
+change in the loss function is below this value. Default is \code{0.001}.}
 
-\item{max_iter}{Maximum iterations number.}
+\item{max_iter}{Maximum number of iterations.}
 
-\item{plot}{Plot the Logistic Biplot.}
+\item{plot}{Logical; if \code{TRUE}, the logistic biplot is plotted after
+fitting. Default is \code{FALSE}.}
 
-\item{...}{other arguments}
+\item{...}{Additional arguments (currently unused).}
 }
 \value{
-The coefficients of A and B matrix.
+An object of class \code{BiplotML} (a named list) containing:
+  \describe{
+    \item{\code{Ahat}}{Estimated row-marker matrix.}
+    \item{\code{Bhat}}{Estimated column-marker matrix (including intercepts).}
+    \item{\code{method}}{Character string \code{"Gradient Descent"}.}
+  }
 }
 \description{
-This function computes the parameters of A and B in Binary Logistic Biplot under algorithm of Descendent Gradient.
+Estimates the row-marker matrix \strong{A} and the column-marker matrix
+\strong{B} of a binary logistic biplot using a simple (batch) gradient
+descent algorithm. This function is mainly provided for pedagogical purposes
+and benchmarking; the MM and CG methods in \code{\link{LogBip}} are
+generally faster and more reliable.
 }
 \details{
-We note that the Binary Logistic Biplot is defined as: \deqn{logit(\pi_{ij})= log\left( \frac{\pi_{ij}}{1-\pi_{ij}} \right)=\mu_{j}+\sum_{s=1}^kb_{js}a_{is} = \mu_{j}+\mathbf{a_i^{T}b_j}}
-Also, note that the gradient is: \deqn{\nabla \ell= \left(\frac{\partial \ell}{\partial \mu}, \frac{\partial \ell}{\partial \mathbf{A}}, \frac{\partial \ell}{\partial \mathbf{B}}\right)== \left( (\Pi - \mathbf{X})^T,  (\Pi - \mathbf{X})\mathbf{B}, (\Pi - \mathbf{X})^TA  \right)}
+The model is
+\deqn{\mathrm{logit}(\pi_{ij}) =
+  \log\!\left(\frac{\pi_{ij}}{1-\pi_{ij}}\right) =
+  \mu_j + \sum_{s=1}^k b_{js}\,a_{is} = \mu_j + \mathbf{a}_i^\top \mathbf{b}_j.}
+The gradient with respect to the full parameter vector is
+\deqn{\nabla\ell =
+  \left(\frac{\partial\ell}{\partial\boldsymbol{\mu}},\,
+        \frac{\partial\ell}{\partial\mathbf{A}},\,
+        \frac{\partial\ell}{\partial\mathbf{B}}\right) =
+  \left((\boldsymbol{\Pi}-\mathbf{X})^\top,\;
+        (\boldsymbol{\Pi}-\mathbf{X})\mathbf{B},\;
+        (\boldsymbol{\Pi}-\mathbf{X})^\top\mathbf{A}\right).}
 }
 \examples{
-data('Methylation')
+data("Methylation")
 set.seed(02052020)
-MatGD <- gradientDesc(x = Methylation, k=2, max_iter=10000)
-outGD <- gradientDesc(x = Methylation, k=2, max_iter=10000, plot = TRUE)
+outGD <- gradientDesc(x = Methylation, k = 2, max_iter = 10000, plot = TRUE)
 }
 \references{
-Vicente-Villardon, J.L. and Galindo, M. Purificacion (2006), \emph{Multiple Correspondence Analysis and related Methods. Chapter: Logistic Biplots}. Chapman-Hall
+Vicente-Villardon, J. L., & Galindo, M. P. (2006). Logistic biplots. In
+M. Greenacre & J. Blasius (Eds.), \emph{Multiple Correspondence Analysis and
+Related Methods} (pp. 503--521). Chapman & Hall.
 }
 \seealso{
-\code{\link{plotBLB}, \link{performanceBLB}}
+\code{\link{plotBLB}}, \code{\link{performanceBLB}}
 }
 \author{
-Giovany Babativa <gbabativam@gmail.com>
+Giovany Babativa <jgbabativam@unal.edu.co>
 }

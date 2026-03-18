@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotBLB.R
 \name{plotBLB}
 \alias{plotBLB}
-\title{Plot a Binary Logistic Biplot using a BiplotML object}
+\title{Plot a Binary Logistic Biplot}
 \usage{
 plotBLB(
   x,
@@ -19,55 +19,80 @@ plotBLB(
 )
 }
 \arguments{
-\item{x}{Object class BiplotML.}
+\item{x}{An object of class \code{BiplotML}, as returned by
+\code{\link{LogBip}} or \code{\link{bootBLB}}.}
 
-\item{dim}{Dimensions plot. By default \code{Dim1} and \code{Dim2}.}
+\item{dim}{Integer vector of length 2 specifying which dimensions to plot.
+Default is \code{c(1, 2)}.}
 
-\item{col.ind}{Color for the individuals.}
+\item{col.ind}{Color for the row markers. If \code{NULL} (default), a single
+neutral color is used.}
 
-\item{col.var}{Color for the variables.}
+\item{col.var}{Color for the variable arrows. Default is \code{"#0E185F"}.}
 
-\item{label.ind}{By default the row points are not labelled.}
+\item{label.ind}{Logical; if \code{TRUE}, row points are labelled. Default
+is \code{FALSE}.}
 
-\item{draw}{The graph to draw ("ind" for the individuals, "var" for the variables and "biplot" for the row and columns coordinates in the same graph)}
+\item{draw}{Which graph to draw: \code{"biplot"} (default) for both rows and
+columns, \code{"ind"} for individuals only, or \code{"var"} for variables
+only.}
 
-\item{titles}{Title for the Biplot}
+\item{titles}{Title for the plot. Default is \code{NULL} (no title).}
 
-\item{ellipses}{If \code{ellipses=TRUE}, draw confidence ellipses around the rows.}
+\item{ellipses}{Logical; if \code{TRUE}, confidence ellipses are drawn around
+the row markers (requires a bootstrap fit from \code{\link{bootBLB}}).
+Default is \code{FALSE}.}
 
-\item{endsegm}{Represents where the segment of a variable ends on the logit probability scale. By default \code{endsegm=0.75}}
+\item{endsegm}{End point of the variable arrow on the probability scale.
+The arrow starts at 0.5 and ends at this value. Default is \code{0.75}.}
 
-\item{repel}{Repel overlapping text labels.}
+\item{repel}{Logical; if \code{TRUE}, overlapping row labels are repelled
+using \pkg{ggrepel}. Default is \code{FALSE}.}
 
-\item{xylim}{vector specifying the minimum and maximum of the x-axis and y-axis. For example, you can use xylim=c(-10, 10).}
+\item{xylim}{Numeric vector of length 2 specifying the common range of both
+axes, e.g. \code{c(-10, 10)}. If \code{NULL} (default), the range is
+determined automatically.}
 }
 \value{
-Returns the Biplot of the individuals and variables.
+A \code{ggplot2} object.
 }
 \description{
-Plot the bootstrap binary logistic biplot and draw confidence ellipses on the individuals of an object BiplotML.
+Produces a ggplot2-based logistic biplot from a \code{BiplotML} object,
+optionally drawing confidence ellipses for the row markers.
 }
 \details{
-If draw = "ind", then the biplot is plotted only for individuals and if draw = "var" then is plotted only for the variables.
+Variable vectors are drawn as arrows from the point where the predicted
+probability equals 0.5 to the point where it equals \code{endsegm}.
+Short arrows indicate a rapid increase in the probability of the
+corresponding characteristic. The orthogonal projection of a row marker onto
+a variable's arrow approximates the probability that the characteristic is
+present for that individual.
 }
 \examples{
 \donttest{
 data("Methylation")
 set.seed(123456)
-outBLB <- bootBLB(x = Methylation, sup = TRUE, plot=FALSE)
-plotBLB(x = outBLB, titles = "Methylation Logistic Biplot", ellipses = FALSE)
-plotBLB(x = outBLB, titles = "Methylation LogBiplot", endsegm = 0.95)
-plotBLB(x = outBLB, label.ind = TRUE, titles = "Methylation LogBiplot")
+outBLB <- bootBLB(x = Methylation, sup = TRUE, plot = FALSE)
+plotBLB(x = outBLB, titles = "Methylation Logistic Biplot",
+        ellipses = FALSE)
+plotBLB(x = outBLB, titles = "Methylation Logistic Biplot",
+        endsegm = 0.95)
+plotBLB(x = outBLB, label.ind = TRUE,
+        titles = "Methylation Logistic Biplot")
 }
 }
 \references{
-Meulman, J. J., & Heiser, W. J. (1983). The display of bootstrap solutions in multidimensional scaling. Murray Hill, NJ: Bell Laboratories. (Technical memorandum)
+Meulman, J. J., & Heiser, W. J. (1983). \emph{The Display of Bootstrap
+Solutions in Multidimensional Scaling} (Technical memorandum). Bell
+Laboratories.
 
-Vicente-Villardon, J.L. and Galindo, M. Purificacion (2006), \emph{Multiple Correspondence Analysis and related Methods. Chapter: Logistic Biplots}. Chapman-Hall
+Vicente-Villardon, J. L., & Galindo, M. P. (2006). Logistic biplots. In
+M. Greenacre & J. Blasius (Eds.), \emph{Multiple Correspondence Analysis and
+Related Methods} (pp. 503--521). Chapman & Hall.
 }
 \seealso{
 \code{\link{bootBLB}}
 }
 \author{
-Giovany Babativa <gbabativam@gmail.com>
+Giovany Babativa <jgbabativam@unal.edu.co>
 }

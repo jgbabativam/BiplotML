@@ -2,7 +2,7 @@
 % Please edit documentation in R/bootBLB.R
 \name{bootBLB}
 \alias{bootBLB}
-\title{Fitting a Binary Logistic Biplot using bootstrap methodology}
+\title{Bootstrap Binary Logistic Biplot}
 \usage{
 bootBLB(
   x,
@@ -20,59 +20,83 @@ bootBLB(
 )
 }
 \arguments{
-\item{x}{Binary matrix.}
+\item{x}{A binary matrix.}
 
-\item{k}{Dimensions number. By default \code{k = 2}.}
+\item{k}{Number of dimensions. Default is \code{k = 2}.}
 
-\item{L}{Penalization parameter. By default \code{L = 0}.}
+\item{L}{Ridge penalization parameter. Default is \code{L = 0}.}
 
-\item{method}{Method to be used to estimate the parameters. By default \code{ method="CG"}}
+\item{method}{Fitting algorithm: \code{"CG"} (default), \code{"BFGS"}, or
+others accepted by \code{\link{LogBip}}.}
 
-\item{type}{For the conjugate-gradients method. Takes value 1 for the Fletcher–Reeves update, 2 for Polak–Ribiere and 3 for Beale–Sorenson.}
+\item{type}{Update formula for the CG method (see \code{\link{LogBip}}).
+Default is \code{type = 1} (Fletcher-Reeves).}
 
-\item{plot}{Plot the Bootstrap Logistic Biplot.}
+\item{plot}{Logical; if \code{TRUE} (default), the bootstrap biplot is
+plotted after fitting.}
 
-\item{sup}{Boolean, if TRUE, rows that are not selected in each resample are treated as supplementary individuals. See details.}
+\item{sup}{Logical; if \code{TRUE} (default), out-of-sample individuals are
+projected as supplementary rows. See Details.}
 
-\item{ellipses}{Draw confidence ellipses. By default is FALSE.}
+\item{ellipses}{Logical; if \code{TRUE}, confidence ellipses are drawn around
+row markers. Default is \code{FALSE}.}
 
-\item{maxit}{The maximum number of iterations. Defaults to 100 for the gradient methods, and 500 without gradient.}
+\item{maxit}{Maximum number of iterations.}
 
-\item{resamples}{Number of iterations in the bootstrap process. By default \code{100}.}
+\item{resamples}{Number of bootstrap resamples. Default is \code{100}.}
 
-\item{conf}{Level confidence in the ellipses. By default \code{conf=0.90}}
+\item{conf}{Confidence level for the ellipses. Default is \code{0.90}.}
 
-\item{col.ind}{Color for the rows.}
+\item{col.ind}{Color for the row markers. Passed to \code{\link{plotBLB}}.}
 }
 \value{
-Coordenates of the matrix A and B in resamples and Biplot
+An object of class \code{BiplotML} (a named list) containing:
+  \describe{
+    \item{\code{Ahat}}{Mean row-marker coordinates across bootstrap resamples.}
+    \item{\code{Bhat}}{Mean column-marker coordinates across bootstrap resamples.}
+    \item{\code{BootA}}{Data frame of row-marker coordinates for all resamples.}
+    \item{\code{BootB}}{Data frame of column-marker coordinates for all resamples.}
+    \item{\code{pred}}{Predicted binary matrix.}
+    \item{\code{fit}}{Confusion matrix (sensitivity, specificity, global accuracy).}
+    \item{\code{rows}}{Row names.}
+    \item{\code{cols}}{Column names.}
+    \item{\code{method}}{Fitting method used.}
+    \item{\code{Ellip}}{Data frame of ellipse coordinates (only when
+      \code{ellipses = TRUE}).}
+  }
 }
 \description{
-This function estimates the vector \eqn{\mu}, matrix A and matrix B using the optimization algorithm chosen by the user and applies a bootstrap methodology to determine the confidence ellipses.
+Fits a binary logistic biplot and applies a bootstrap procedure to obtain
+confidence ellipses for the row markers.
 }
 \details{
-Fitting when sup=TRUE ... whereas sup=FALSE ...
+When \code{sup = TRUE}, individuals not selected in a bootstrap resample are
+treated as supplementary rows: their coordinates are estimated by fixing the
+column markers \strong{B} from the resample fit and optimising only over the
+row coordinates. When \code{sup = FALSE}, only the resampled individuals are
+used and Procrustes rotation aligns bootstrap solutions to the full-data
+solution.
 }
 \examples{
 \donttest{
 data("Methylation")
 set.seed(02052020)
-out.sup <- bootBLB(x = Methylation, ellipses = FALSE)
-out <- bootBLB(x = Methylation, sup = FALSE, ellipses = TRUE)
+out_sup  <- bootBLB(x = Methylation, ellipses = FALSE)
+out_boot <- bootBLB(x = Methylation, sup = FALSE, ellipses = TRUE)
 }
 }
 \references{
-John C. Nash (2011). Unifying Optimization Algorithms to Aid Software System Users:optimx for R. Journal of Statistical Software. 43(9). 1--14.
+Milan, L., & Whittaker, J. (1995). Application of the parametric bootstrap
+to models that incorporate a singular value decomposition.
+\emph{Applied Statistics}, \emph{44}, 31--49.
 
-John C. Nash (2014). On Best Practice Optimization Methods in R. Journal of Statistical Software. 60(2). 1--14.
-
-Milan, L., & Whittaker, J. (1995). Application of the parametric bootstrap to models that incorporate a singular value decomposition. Applied Statistics, 44, 31–49.
-
-Vicente-Villardon, J.L. and Galindo, M. Purificacion (2006), \emph{Multiple Correspondence Analysis and related Methods. Chapter: Logistic Biplots}. Chapman-Hall
+Vicente-Villardon, J. L., & Galindo, M. P. (2006). Logistic biplots. In
+M. Greenacre & J. Blasius (Eds.), \emph{Multiple Correspondence Analysis and
+Related Methods} (pp. 503--521). Chapman & Hall.
 }
 \seealso{
-\code{\link{plotBLB}, \link{performanceBLB}}
+\code{\link{plotBLB}}, \code{\link{performanceBLB}}
 }
 \author{
-Giovany Babativa <gbabativam@gmail.com>
+Giovany Babativa <jgbabativam@unal.edu.co>
 }

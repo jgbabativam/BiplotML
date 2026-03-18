@@ -2,47 +2,72 @@
 % Please edit documentation in R/proj_LogBip.R
 \name{proj_LogBip}
 \alias{proj_LogBip}
-\title{Fitting a Binary Logistic Biplot with Missing Data Using Data Projection and a Block Coordinate Descending Algorithm}
+\title{Fit a Binary Logistic Biplot with Missing Data via Block Coordinate Descent}
 \usage{
 proj_LogBip(x, k = 2, max_iters = 1000, random_start = FALSE, epsilon = 1e-05)
 }
 \arguments{
-\item{x}{binary matrix.}
+\item{x}{A binary matrix, possibly containing \code{NA} values.}
 
-\item{k}{dimensions number. By default \code{k = 2}.}
+\item{k}{Number of dimensions. Default is \code{k = 2}.}
 
-\item{max_iters}{maximum iterations.}
+\item{max_iters}{Maximum number of iterations. Default is \code{1000}.}
 
-\item{random_start}{random initialization}
+\item{random_start}{Logical; if \code{TRUE}, parameters are initialised
+randomly. Default is \code{FALSE} (SVD initialisation).}
 
-\item{epsilon}{convergence criteria}
+\item{epsilon}{Convergence tolerance for the relative decrease in the loss
+function. Default is \code{1e-5}.}
 }
 \value{
-Imputed \eqn{X} matrix and coordenates of the matrix A and B, and \eqn{\mu}
+A named list with components:
+  \describe{
+    \item{\code{mu}}{Estimated intercept vector of length \eqn{p}.}
+    \item{\code{A}}{Estimated row-marker matrix (\eqn{n \times k}).}
+    \item{\code{B}}{Estimated column-marker matrix (\eqn{p \times k}).}
+    \item{\code{x_est}}{Imputed binary matrix (missing entries replaced by
+      fitted values).}
+    \item{\code{iter}}{Number of iterations performed.}
+    \item{\code{loss_funct}}{Vector of normalised loss-function values at each
+      iteration.}
+  }
 }
 \description{
-This function impute the missing values of a binary dataset \eqn{X}, and estimates the vector \eqn{\mu}, matrix A and matrix B using data projection model with a block coordinate descending algorithm.
+Estimates the intercept vector \eqn{\mu}, the row-marker matrix \strong{A},
+and the column-marker matrix \strong{B} using a data-projection model with a
+block coordinate descent algorithm. Missing values in the binary matrix are
+imputed iteratively during model fitting. This function also allows new
+individuals to be projected as supplementary rows without refitting the model,
+since the row markers are derived directly from the estimated column markers.
+This is the low-level function called by \code{\link{LogBip}} when
+\code{method = "PDLB"}.
 }
 \examples{
 \donttest{
 data("Methylation")
 set.seed(12345)
-n <- nrow(Methylation)
-p <- ncol(Methylation)
-miss <- matrix(rbinom(n*p, 1, 0.2), n, p) #I simulate some missing data
+n <- nrow(Methylation); p <- ncol(Methylation)
+miss <- matrix(rbinom(n * p, 1, 0.2), n, p)
 miss <- ifelse(miss == 1, NA, miss)
-x <- Methylation + miss  #Matrix containing missing data
-out <- LogBip(x, method = "PDLB", maxit = 1000)
+x_miss <- Methylation + miss
+out <- proj_LogBip(x = x_miss, k = 2, max_iters = 1000)
 }
 }
 \references{
-Babativa-Marquez, J. G., & Vicente-Villardon, J. L. (2022). Logistic biplot with missing data.
-Babativa-Marquez, J. G., & Vicente-Villardon, J. L. (2021). Logistic Biplot by Conjugate Gradient Algorithms and Iterated SVD. Mathematics, 9(16).
-Vicente-Villardon, J.L. and Galindo, M. Purificacion (2006), \emph{Multiple Correspondence Analysis and related Methods. Chapter: Logistic Biplots}. Chapman-Hall
+Babativa-Marquez, J. G., & Vicente-Villardon, J. L. (2022). Logistic biplot
+with missing data. \emph{In process}.
+
+Babativa-Marquez, J. G., & Vicente-Villardon, J. L. (2021). Logistic biplot
+by conjugate gradient algorithms and iterated SVD. \emph{Mathematics},
+\emph{9}(16), 2015. \doi{10.3390/math9162015}
+
+Vicente-Villardon, J. L., & Galindo, M. P. (2006). Logistic biplots. In
+M. Greenacre & J. Blasius (Eds.), \emph{Multiple Correspondence Analysis and
+Related Methods} (pp. 503--521). Chapman & Hall.
 }
 \seealso{
-\code{\link{cv_LogBip}}
+\code{\link{LogBip}}, \code{\link{cv_LogBip}}
 }
 \author{
-Giovany Babativa <gbabativam@gmail.com>
+Giovany Babativa <jgbabativam@unal.edu.co>
 }

@@ -2,32 +2,50 @@
 % Please edit documentation in R/predict_LB.R
 \name{pred_LB}
 \alias{pred_LB}
-\title{Predict logistic biplot and thresholds by variable}
+\title{Predict Binary Responses from a Logistic Biplot}
 \usage{
 pred_LB(object, x, ncuts = 100)
 }
 \arguments{
-\item{object}{BiplotML object}
+\item{object}{An object of class \code{BiplotML}, as returned by
+\code{\link{LogBip}}.}
 
-\item{x}{Binary matrix.}
+\item{x}{The original binary matrix used to fit the model.}
 
-\item{ncuts}{Number of equidistant cuts between 0 and 1 that will be evaluated. By default \code{ncuts = 100}}
+\item{ncuts}{Number of equally spaced threshold candidates in \eqn{[0, 1]}.
+Default is \code{100}.}
 }
 \value{
-This function returns the thresholds per variable, the predicted matrix, the confusion matrix and the BER.
+A named list of class \code{BiplotML} with components:
+  \describe{
+    \item{\code{thresholds}}{Data frame with the optimal threshold and minimum
+      BER for each variable.}
+    \item{\code{predictX}}{Predicted binary matrix.}
+    \item{\code{fitted}}{Confusion matrix (sensitivity, specificity, global
+      accuracy) for each variable.}
+    \item{\code{BER}}{Overall Balanced Error Rate (in percent).}
+  }
 }
 \description{
-Predicts the binary matrix and calculates the optimal thresholds per variable that minimize the Balanced Accuracy (BACC)
+Predicts the binary response matrix from a fitted logistic biplot and
+computes the optimal classification threshold for each variable by minimising
+the Balanced Error Rate (BER).
 }
 \details{
-The threshold for each variable is lowered to minimize the Balanced Error Rate (BER).
-\deqn{BER = 1 - \frac{1}{2} (\frac{TP}{TP+FN} + \frac{TN}{TN+FP}),}
-where \code{TP} is the number of true positives, \code{TN} is the number of true negatives, \code{FP} is the number of false positives and \code{FN} is the number of false negatives
+The optimal threshold for variable \eqn{j} is the value \eqn{\alpha_j \in [0,1]}
+that minimises the Balanced Error Rate:
+\deqn{BER_j = 1 - \frac{1}{2}
+  \left(\frac{TP_j}{TP_j + FN_j} + \frac{TN_j}{TN_j + FP_j}\right),}
+where \eqn{TP}, \eqn{TN}, \eqn{FP}, and \eqn{FN} denote true positives,
+true negatives, false positives, and false negatives, respectively.
 }
 \examples{
 \donttest{
 data("Methylation")
-LB <- LogBip(Methylation, plot = FALSE)
+LB  <- LogBip(Methylation, plot = FALSE)
 out <- pred_LB(LB, Methylation)
 }
+}
+\author{
+Giovany Babativa <gbabativam@gmail.com>
 }
