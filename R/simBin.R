@@ -7,7 +7,7 @@
 #' Simulates a binary data matrix from a logistic biplot latent variable model
 #' with known parameters, useful for benchmarking and cross-validation studies.
 #'
-#' @author Giovany Babativa <gbabativam@@gmail.com>
+#' @author Giovany Babativa <jgbabativam@@unal.edu.co>
 #'
 #' @param n Number of rows (individuals).
 #' @param p Number of columns (variables).

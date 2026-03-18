@@ -13,7 +13,7 @@
 #' where \eqn{TP}, \eqn{TN}, \eqn{FP}, and \eqn{FN} denote true positives,
 #' true negatives, false positives, and false negatives, respectively.
 #'
-#' @author Giovany Babativa <gbabativam@@gmail.com>
+#' @author Giovany Babativa <jgbabativam@@unal.edu.co>
 #'
 #' @param object An object of class \code{BiplotML}, as returned by
 #'   \code{\link{LogBip}}.

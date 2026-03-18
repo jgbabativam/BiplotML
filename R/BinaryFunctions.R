@@ -216,3 +216,26 @@ log_like <- function(x, w = NULL, theta){
   log_like <- -sum(e_log_like)
   return(log_like)
 }
+
+.run_optimr <- function(par, fn, gr, ..., method, ctrl = list()) {
+  old_wd <- setwd(tempdir())
+  on.exit({
+    for (f in c(file.path(tempdir(), "badhess.txt"),
+                file.path(old_wd,    "badhess.txt"))) {
+      if (file.exists(f)) unlink(f, force = TRUE)
+    }
+    setwd(old_wd)
+  }, add = TRUE)
+
+  if (length(ctrl) > 0) {
+    suppressWarnings(
+      optimr(par = par, fn = fn, gr = gr, ...,
+             method = method, control = ctrl)
+    )
+  } else {
+    suppressWarnings(
+      optimr(par = par, fn = fn, gr = gr, ...,
+             method = method)
+    )
+  }
+}

@@ -47,5 +47,5 @@ out <- pred_LB(LB, Methylation)
 }
 }
 \author{
-Giovany Babativa <gbabativam@gmail.com>
+Giovany Babativa <jgbabativam@unal.edu.co>
 }

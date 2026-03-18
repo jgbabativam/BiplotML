@@ -84,19 +84,14 @@ bootBLB <- function(x, k = 2, L = 0, method = "CG", type = 1, plot = TRUE,
   aik <- n * k; bjk <- p * (k + 1)
   dTheta <- aik + bjk; s <- k + 1
 
-  # Helper: run optimr suppressing the verbose CG control messages
   run_optimr <- function(par, xt, use_type = FALSE) {
     if (use_type) {
-      suppressWarnings(
-        optimr(par = par, fn = J.BipLog.BIN, gr = Grad.BipLog.BIN,
-               xt = xt, k = k, lambda = L, method = method,
-               control = list(type = type))
-      )
+      .run_optimr(par = par, fn = J.BipLog.BIN, gr = Grad.BipLog.BIN,
+                  xt = xt, k = k, lambda = L, method = method,
+                  ctrl = list(type = type))
     } else {
-      suppressWarnings(
-        optimr(par = par, fn = J.BipLog.BIN, gr = Grad.BipLog.BIN,
-               xt = xt, k = k, lambda = L, method = method)
-      )
+      .run_optimr(par = par, fn = J.BipLog.BIN, gr = Grad.BipLog.BIN,
+                  xt = xt, k = k, lambda = L, method = method)
     }
   }
 
@@ -147,10 +142,10 @@ bootBLB <- function(x, k = 2, L = 0, method = "CG", type = 1, plot = TRUE,
       pars  <- runif(n_sup * k)
       xsup  <- xtemp[Asup$rowId, ]
 
-      res.sup <- suppressWarnings(
-        optimr(par = pars, fn = Indsup.BIN, gr = Indsup.GradBIN,
-               xs = xsup, B = Bb, k = k, lambda = L, method = method)
-      )
+      res.sup <- .run_optimr(par = pars, fn = Indsup.BIN,
+                             gr = Indsup.GradBIN,
+                             xs = xsup, B = Bb, k = k,
+                             lambda = L, method = method)
 
       Asup <- data.frame(matrix(res.sup$par, n_sup, k),
                          rowId = Asup[, ncol(Asup)])

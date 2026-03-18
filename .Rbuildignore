@@ -4,3 +4,4 @@
 ^CRAN-RELEASE$
 ^CRAN-SUBMISSION$
 ^cran-comments\.md$
+^README\.md$

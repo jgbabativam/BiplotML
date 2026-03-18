@@ -1,13 +1,20 @@
 # BiplotML
 
+<!-- badges: start -->
+[![CRAN status](https://www.r-pkg.org/badges/version/BiplotML)](https://CRAN.R-project.org/package=BiplotML)
+[![R-CMD-check](https://github.com/jgbabativam/BiplotML/workflows/R-CMD-check/badge.svg)](https://github.com/jgbabativam/BiplotML/actions)
+<!-- badges: end -->
+
+## Overview
+
 **BiplotML** implements methods for fitting logistic biplot models to multivariate binary data. A logistic biplot represents individuals as points and binary variables as directed vectors in a low-dimensional subspace. The orthogonal projection of each individual's point onto a variable's vector approximates the expected probability that the corresponding characteristic is present, providing an intuitive simultaneous visualization of observations and variables.
 
 The package provides several fitting algorithms:
 
-* **MM** — Coordinate descent Majorization-Minimization algorithm (fast, recommended default).
-* **PDLB** — Block coordinate descent algorithm based on data projection; handles matrices with missing values and allows new individuals to be projected as supplementary rows without refitting the model.
-* **CG** — Conjugate gradient algorithms (Fletcher–Reeves, Polak–Ribière, Beale–Sorenson, Dai–Yuan).
-* **BFGS** — Broyden–Fletcher–Goldfarb–Shanno quasi-Newton method.
+- **MM** — Coordinate descent Majorization-Minimization algorithm (fast, recommended default).
+- **PDLB** — Block coordinate descent algorithm based on data projection; handles matrices with missing values and allows new individuals to be projected as supplementary rows without refitting the model.
+- **CG** — Conjugate gradient algorithms (Fletcher–Reeves, Polak–Ribière, Beale–Sorenson, Dai–Yuan).
+- **BFGS** — Broyden–Fletcher–Goldfarb–Shanno quasi-Newton method.
 
 A k-fold cross-validation function (`cv_LogBip`) is included to help select the number of dimensions.
 
@@ -54,29 +61,28 @@ res_boot <- bootBLB(x = Methylation, ellipses = TRUE)
 
 ## Main functions
 
-|Function|Description|
-|-|-|
-|`LogBip()`|Fit a logistic biplot using a chosen algorithm|
-|`sdv_MM()`|Coordinate descent MM algorithm (called internally by `LogBip`)|
-|`proj_LogBip()`|Block coordinate descent with data projection and missing-data support|
-|`cv_LogBip()`|Cross-validation to select the number of dimensions|
-|`bootBLB()`|Bootstrap logistic biplot with confidence ellipses|
-|`plotBLB()`|Plot a logistic biplot from a `BiplotML` object|
-|`pred_LB()`|Predict binary responses and compute optimal per-variable thresholds|
-|`fitted_LB()`|Extract fitted values on the logit or probability scale|
-|`performanceBLB()`|Compare convergence and speed across multiple optimization algorithms|
-|`gradientDesc()`|Fit a logistic biplot via simple gradient descent|
-|`simBin()`|Simulate a binary data matrix from a latent variable model|
+| Function | Description |
+|---|---|
+| `LogBip()` | Fit a logistic biplot using a chosen algorithm |
+| `sdv_MM()` | Coordinate descent MM algorithm (called internally by `LogBip`) |
+| `proj_LogBip()` | Block coordinate descent with data projection and missing-data support |
+| `cv_LogBip()` | Cross-validation to select the number of dimensions |
+| `bootBLB()` | Bootstrap logistic biplot with confidence ellipses |
+| `plotBLB()` | Plot a logistic biplot from a `BiplotML` object |
+| `pred_LB()` | Predict binary responses and compute optimal per-variable thresholds |
+| `fitted_LB()` | Extract fitted values on the logit or probability scale |
+| `performanceBLB()` | Compare convergence and speed across multiple optimization algorithms |
+| `gradientDesc()` | Fit a logistic biplot via simple gradient descent |
+| `simBin()` | Simulate a binary data matrix from a latent variable model |
 
 ## Citation
 
 If you use BiplotML in your research, please cite:
 
-> Babativa-Márquez, J. G., \& Vicente-Villardón, J. L. (2021). Logistic biplot by
+> Babativa-Márquez, J. G., & Vicente-Villardón, J. L. (2021). Logistic biplot by
 > conjugate gradient algorithms and iterated SVD. *Mathematics*, *9*(16), 2015.
 > <https://doi.org/10.3390/math9162015>
 
 ## Author
 
 Maintained by **Jose Giovany Babativa-Marquez** — jgbabativam@unal.edu.co
-

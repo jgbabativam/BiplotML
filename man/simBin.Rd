@@ -43,5 +43,5 @@ x <- simBin(n = 100, p = 50, k = 3, D = 0.5)
 \code{\link{cv_LogBip}}
 }
 \author{
-Giovany Babativa <gbabativam@gmail.com>
+Giovany Babativa <jgbabativam@unal.edu.co>
 }

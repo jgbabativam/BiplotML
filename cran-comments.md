@@ -1,43 +1,32 @@
-## Resubmission notes (v1.1.1)
+## Resubmission (v1.1.1)
 
 This is a resubmission after the package was archived on 2023-10-29.
+All changes are described in NEWS.md.
 
-### Root cause of archiving
-The `optimr` package was removed from CRAN on 2023-10-29 (merged into `optimx`).
-All calls to `optimr()` now use `optimx::optimr()`. The `optimr` package has
-been removed from `Imports` entirely.
+## Test environments
 
-### Dependency changes
-* `optimr` removed from `Imports` (package no longer on CRAN; function absorbed
-  into `optimx`).
-* `optimr`, `optimx`, and `shapes` moved from `Depends` to `Imports`.
-* `RSpectra` moved from `Suggests` to `Imports` (required for large matrices).
-
-### Documentation and code fixes
-* `DESCRIPTION` Title in title case; Description includes `<doi:>` reference.
-* `utils::globalVariables()` moved to `R/zzz.R` (previously caused a roxygen
-  block error in `plotBLB.R`).
-* `importFrom(stats,svd)` and `importFrom(stats,eigen)` removed — these
-  functions belong to base R, not `stats`.
-* All ggplot2 `aes()` calls use `.data[[]]` tidy evaluation to avoid undefined
-  global variable NOTEs.
-* Non-ASCII characters (em-dash, en-dash, e-grave) replaced with ASCII in all
-  R source files.
-* `bootBLB()`: fixed column-name bug where `Ahat` received `Dimb1`/`Dimb2`
-  instead of `Dim1`/`Dim2`, causing `plotBLB()` to fail with
-  "Column 'Dim1' not found".
-* `bootBLB()`: suppressed verbose optimr CG control messages printed to console.
-* Fixed `Sensitivy` typo -> `Sensitivity` in confusion matrix output.
-* `inst/CITATION` updated from deprecated `citEntry()` to `bibentry()`.
-
-### Timestamp note
-The "future timestamps" warning on `LICENSE` and `README.md` is caused by
-git not preserving file modification times. Files were re-touched before
-submission. This is a known artefact of git-based workflows and does not
-affect package functionality.
+* Windows 11 x64, R 4.5.1 (local), devtools::check(cran = TRUE)
+* win-builder (R-devel)
 
 ## R CMD check results
 
-0 errors | 0 warnings | 1 note
+0 errors | 0 warnings | 0 notes
 
-* NOTE: New submission (package was previously archived on 2023-10-29).
+## Notes on previous check rounds
+
+**`badhess.txt` (resolved):** `optimx` writes this file to the working
+directory when it encounters an indefinite Hessian during CG optimization.
+It has been suppressed by routing all `optimr()` and `optimx()` calls through
+an internal wrapper (`.run_optimr()`) that changes to `tempdir()` before the
+call and explicitly deletes `badhess.txt` from both `tempdir()` and the
+original working directory in an `on.exit()` handler.
+
+**`future file timestamps: NEWS.md` (infrastructure note):** The check machine
+reported "unable to verify current time", meaning it could not reach a time
+server to confirm whether the timestamp is truly in the future. This is a
+transient infrastructure issue on the check server and is not caused by the
+package. `README.md` has been added to `.Rbuildignore` so it is not included
+in the built package.
+
+**`optimr` dependency (resolved):** The `optimr` package was removed from CRAN
+on 2023-10-29. All calls now use `optimx::optimr()`.

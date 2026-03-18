@@ -92,7 +92,15 @@ performanceBLB <- function(xi, k = 2, L = 0, method = NULL, maxit = NULL) {
                lambda = L, method = method0)
   if (!is.null(maxit)) args$itnmax <- maxit
 
-  res <- do.call(optimx, args)
+  old_wd <- setwd(tempdir())
+  on.exit({
+    for (f in c(file.path(tempdir(), "badhess.txt"),
+                file.path(old_wd,    "badhess.txt"))) {
+      if (file.exists(f)) unlink(f, force = TRUE)
+    }
+    setwd(old_wd)
+  }, add = TRUE)
+  res <- suppressWarnings(do.call(optimx, args))
 
   res$result <- ifelse(
     res$convcode == 0,    "convergence",
