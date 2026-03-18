@@ -1,14 +1,5 @@
 # BiplotML
 
-<!-- badges: start -->
-
-[!\[CRAN status](https://www.r-pkg.org/badges/version/BiplotML)](https://CRAN.R-project.org/package=BiplotML)
-[!\[R-CMD-check](https://github.com/jgbabativam/BiplotML/workflows/R-CMD-check/badge.svg)](https://github.com/jgbabativam/BiplotML/actions)
-
-<!-- badges: end -->
-
-## Overview
-
 **BiplotML** implements methods for fitting logistic biplot models to multivariate binary data. A logistic biplot represents individuals as points and binary variables as directed vectors in a low-dimensional subspace. The orthogonal projection of each individual's point onto a variable's vector approximates the expected probability that the corresponding characteristic is present, providing an intuitive simultaneous visualization of observations and variables.
 
 The package provides several fitting algorithms:
