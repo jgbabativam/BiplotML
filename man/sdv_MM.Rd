@@ -6,7 +6,7 @@
 \usage{
 sdv_MM(
   x,
-  k = 2,
+  k = 5,
   iterations = 1000,
   truncated = TRUE,
   random = FALSE,
@@ -16,7 +16,7 @@ sdv_MM(
 \arguments{
 \item{x}{A binary matrix with no missing values.}
 
-\item{k}{Number of dimensions. Default is \code{k = 2}.}
+\item{k}{Number of dimensions. Default is \code{k = 5}.}
 
 \item{iterations}{Maximum number of iterations. Default is \code{1000}.}
 

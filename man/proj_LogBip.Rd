@@ -4,12 +4,12 @@
 \alias{proj_LogBip}
 \title{Fit a Binary Logistic Biplot with Missing Data via Block Coordinate Descent}
 \usage{
-proj_LogBip(x, k = 2, max_iters = 1000, random_start = FALSE, epsilon = 1e-05)
+proj_LogBip(x, k = 5, max_iters = 1000, random_start = FALSE, epsilon = 1e-05)
 }
 \arguments{
 \item{x}{A binary matrix, possibly containing \code{NA} values.}
 
-\item{k}{Number of dimensions. Default is \code{k = 2}.}
+\item{k}{Number of dimensions. Default is \code{k = 5}.}
 
 \item{max_iters}{Maximum number of iterations. Default is \code{1000}.}
 

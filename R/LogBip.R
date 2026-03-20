@@ -35,7 +35,7 @@
 #'
 #' @param x A binary matrix (or a matrix with \code{NA} values when
 #'   \code{method = "PDLB"}).
-#' @param k Number of dimensions. Default is \code{k = 2}.
+#' @param k Number of dimensions. Default is \code{k = 5}.
 #' @param method Fitting algorithm. One of \code{"MM"} (default), \code{"CG"},
 #'   \code{"PDLB"}, or \code{"BFGS"}.
 #' @param type Update formula for the conjugate gradient method: \code{1} =
@@ -113,7 +113,7 @@
 #' res_PDLB <- LogBip(x = x_miss, method = "PDLB", maxit = 1000)
 #' }
 
-LogBip <- function(x, k = 2, method = "MM", type = NULL, plot = TRUE,
+LogBip <- function(x, k = 5, method = "MM", type = NULL, plot = TRUE,
                    maxit = NULL, endsegm = 0.90, label.ind = FALSE,
                    col.ind = NULL,
                    draw = c("biplot", "ind", "var"),

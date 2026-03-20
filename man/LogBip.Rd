@@ -6,7 +6,7 @@
 \usage{
 LogBip(
   x,
-  k = 2,
+  k = 5,
   method = "MM",
   type = NULL,
   plot = TRUE,
@@ -24,7 +24,7 @@ LogBip(
 \item{x}{A binary matrix (or a matrix with \code{NA} values when
 \code{method = "PDLB"}).}
 
-\item{k}{Number of dimensions. Default is \code{k = 2}.}
+\item{k}{Number of dimensions. Default is \code{k = 5}.}
 
 \item{method}{Fitting algorithm. One of \code{"MM"} (default), \code{"CG"},
 \code{"PDLB"}, or \code{"BFGS"}.}

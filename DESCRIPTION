@@ -31,7 +31,6 @@ Depends:
     R (>= 4.1.0)
 Imports:
     optimx,
-    shapes,
     RSpectra
 Suggests:
     testthat (>= 3.0.0),

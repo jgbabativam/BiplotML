@@ -12,72 +12,112 @@ plotBLB(
   label.ind = FALSE,
   draw = c("biplot", "ind", "var"),
   titles = NULL,
-  subtitle = NULL,
   ellipses = FALSE,
   endsegm = 0.75,
   repel = FALSE,
-  xylim = NULL
+  xylim = NULL,
+  xlim = NULL,
+  ylim = NULL,
+  escala = NULL
 )
 }
 \arguments{
 \item{x}{An object of class \code{BiplotML}, as returned by
-\code{\link{LogBip}} or \code{\link{bootBLB}}.}
+\code{\link{LogBip}}.}
 
 \item{dim}{Integer vector of length 2 specifying which dimensions to plot.
 Default is \code{c(1, 2)}.}
 
-\item{col.ind}{Color for the row markers. If \code{NULL} (default), a single
-neutral color is used.}
+\item{col.ind}{Optional vector of the same length as the number of rows in
+the original data, used to color \emph{and} shape the row markers by a
+categorical variable (e.g., \code{col.ind = df$group}). Levels are
+mapped to the \code{"Set1"} palette and to filled geometric shapes.
+If \code{NULL} (default), all row markers are drawn as gold triangles
+(\code{shape = 17}, color \code{"#E7B800"}) when no \code{col.ind} is
+provided.}
 
-\item{col.var}{Color for the variable arrows. Default is \code{"#0E185F"}.}
+\item{col.var}{Color for the variable arrows. Default is \code{"#0E185F"}
+(dark navy).}
 
-\item{label.ind}{Logical; if \code{TRUE}, row points are labelled. Default
-is \code{FALSE}.}
-
-\item{draw}{Which graph to draw: \code{"biplot"} (default) for both rows and
-columns, \code{"ind"} for individuals only, or \code{"var"} for variables
-only.}
-
-\item{titles}{Main title for the plot. Default is \code{NULL} (no title).}
-
-\item{subtitle}{Subtitle for the plot, typically the algorithm name. Default
-is \code{NULL}.}
-
-\item{ellipses}{Logical; if \code{TRUE}, confidence ellipses are drawn around
-the row markers (requires a bootstrap fit from \code{\link{bootBLB}}).
+\item{label.ind}{Logical; if \code{TRUE}, row markers are labelled.
 Default is \code{FALSE}.}
 
+\item{draw}{Which graph to draw. One of \code{"biplot"} (default, both row
+and column markers), \code{"ind"} (row markers only), or \code{"var"}
+(variable arrows only). Partial matching is supported.}
+
+\item{titles}{Main title for the plot. If \code{NULL} (default), a
+generic title is used depending on \code{draw}.}
+
+\item{ellipses}{Logical; if \code{TRUE}, bootstrap confidence ellipses are
+drawn around the row markers. Requires a bootstrap fit}
+
 \item{endsegm}{End point of the variable arrow on the probability scale.
-The arrow starts at 0.5 and ends at this value. Default is \code{0.75}.}
+The arrow starts at \eqn{p = 0.5} and ends at this value.
+Default is \code{0.75}.}
 
-\item{repel}{Logical; if \code{TRUE}, overlapping row labels are repelled
-using \pkg{ggrepel}. Default is \code{FALSE}.}
+\item{repel}{Logical; if \code{TRUE}, overlapping variable labels are
+repelled using \pkg{ggrepel}. Default is \code{FALSE}.}
 
-\item{xylim}{Numeric vector of length 2 specifying the common range of both
-axes, e.g. \code{c(-10, 10)}. If \code{NULL} (default), the range is
-determined automatically from all plotted elements including ellipses.}
+\item{xylim}{Numeric vector of length 2 specifying a symmetric range
+applied to both axes, e.g., \code{c(-80, 80)}. Overrides automatic
+limits. Takes precedence over automatic limits but is overridden by
+\code{xlim}/\code{ylim} if those are also supplied.
+Default is \code{NULL}.}
+
+\item{xlim}{Numeric vector of length 2 specifying the range of the
+x-axis independently, e.g., \code{c(-100, 60)}. Takes precedence over
+\code{xylim}. Default is \code{NULL}.}
+
+\item{ylim}{Numeric vector of length 2 specifying the range of the
+y-axis independently, e.g., \code{c(-80, 80)}. Takes precedence over
+\code{xylim}. Default is \code{NULL}.}
+
+\item{escala}{Positive numeric scalar. Multiplicative factor applied to
+the row marker coordinates (\code{x$Ahat}) before plotting, so that
+they are on a comparable visual scale to the variable arrows.
+If \code{NULL} (default), the value is chosen automatically so that
+the range of the scaled row markers matches the range of the variable
+arrows, producing a visually balanced biplot. Pass an explicit numeric
+value to override the automatic calculation (e.g., \code{escala = 65}).}
 }
 \value{
-A \code{ggplot2} object.
+A \code{ggplot2} object that can be further customised with
+  standard \pkg{ggplot2} functions (e.g., \code{theme()}, \code{labs()}).
 }
 \description{
-Produces a ggplot2-based logistic biplot from a \code{BiplotML} object,
-optionally drawing confidence ellipses for the row markers.
+Produces a \pkg{ggplot2}-based logistic biplot from a \code{BiplotML}
+object fitted with \code{\link{LogBip}}. Supports coloring and
+shaping of row markers by a categorical variable, filled arrowheads,
+dashed reference lines that span the full plot area, and flexible axis-limit control via
+\code{xylim}, \code{xlim}, and \code{ylim}.
 }
 \details{
 Variable vectors are drawn as arrows from the point where the predicted
 probability equals 0.5 to the point where it equals \code{endsegm}.
 Short arrows indicate a rapid increase in the probability of the
-corresponding characteristic. The orthogonal projection of a row marker onto
-a variable's arrow approximates the probability that the characteristic is
-present for that individual.
+corresponding characteristic. The orthogonal projection of a row marker
+onto a variable's arrow approximates the probability that the
+characteristic is present for that individual.
+
+The three arguments that control axis limits are evaluated in the
+following order of priority:
+\enumerate{
+  \item \code{xlim} and \code{ylim} (independent limits for each axis).
+  \item \code{xylim} (symmetric limits applied to both axes).
+  \item Automatic limits derived from all plotted elements.
+}
+
+The \code{escala} argument multiplies the row marker coordinates before
+plotting so that they are visually comparable to the variable arrows,
+which are expressed in the original parameter units. It only affects the
+display, not the stored coordinates.
 }
 \examples{
 \donttest{
 data("Methylation")
 set.seed(123456)
 res <- LogBip(x = Methylation, method = "MM", maxit = 1000, plot = FALSE)
-plotBLB(x = res, titles = "Methylation Logistic Biplot", endsegm = 0.95)
 }
 }
 \references{
@@ -86,11 +126,11 @@ Solutions in Multidimensional Scaling} (Technical memorandum). Bell
 Laboratories.
 
 Vicente-Villardon, J. L., & Galindo, M. P. (2006). Logistic biplots. In
-M. Greenacre & J. Blasius (Eds.), \emph{Multiple Correspondence Analysis and
-Related Methods} (pp. 503--521). Chapman & Hall.
+M. Greenacre & J. Blasius (Eds.), \emph{Multiple Correspondence Analysis
+and Related Methods} (pp. 503--521). Chapman & Hall.
 }
 \seealso{
-\code{\link{bootBLB}}
+\code{\link{LogBip}}
 }
 \author{
 Giovany Babativa <jgbabativam@unal.edu.co>

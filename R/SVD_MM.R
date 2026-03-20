@@ -9,7 +9,7 @@
 #' @author Giovany Babativa <jgbabativam@@unal.edu.co>
 #'
 #' @param x A binary matrix with no missing values.
-#' @param k Number of dimensions. Default is \code{k = 2}.
+#' @param k Number of dimensions. Default is \code{k = 5}.
 #' @param iterations Maximum number of iterations. Default is \code{1000}.
 #' @param truncated Logical; if \code{TRUE} (default for large matrices), the
 #'   truncated SVD from \pkg{RSpectra} is used to speed up computation.
@@ -44,7 +44,7 @@
 #' data("Methylation")
 #' out <- sdv_MM(x = Methylation)
 #' }
-sdv_MM <- function(x, k = 2, iterations = 1000, truncated = TRUE,
+sdv_MM <- function(x, k = 5, iterations = 1000, truncated = TRUE,
                    random = FALSE, epsilon = 1e-4) {
 
   n <- nrow(x); p <- ncol(x)

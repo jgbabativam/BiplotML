@@ -13,7 +13,7 @@
 #' @author Giovany Babativa <jgbabativam@@unal.edu.co>
 #'
 #' @param x A binary matrix, possibly containing \code{NA} values.
-#' @param k Number of dimensions. Default is \code{k = 2}.
+#' @param k Number of dimensions. Default is \code{k = 5}.
 #' @param max_iters Maximum number of iterations. Default is \code{1000}.
 #' @param random_start Logical; if \code{TRUE}, parameters are initialised
 #'   randomly. Default is \code{FALSE} (SVD initialisation).
@@ -57,7 +57,7 @@
 #' out <- proj_LogBip(x = x_miss, k = 2, max_iters = 1000)
 #' }
 
-proj_LogBip <- function(x, k = 2, max_iters = 1000,
+proj_LogBip <- function(x, k = 5, max_iters = 1000,
                         random_start = FALSE, epsilon = 1e-05) {
 
   x <- as.matrix(x)
