@@ -74,7 +74,7 @@
 #'   }
 #'
 #' @references
-#' Babativa-Marquez, J. G., & Vicente-Villardon, J. L. (2022). Logistic biplot
+#' Babativa-Marquez, J. G., & Vicente-Villardon, J. L. (2026). Logistic biplot
 #' with missing data. \emph{In process}.
 #'
 #' Babativa-Marquez, J. G., & Vicente-Villardon, J. L. (2021). Logistic biplot
@@ -166,11 +166,12 @@ LogBip <- function(x, k = 2, method = "MM", type = NULL, plot = TRUE,
   }
 
   if (method == "CG") {
-    res <- .run_optimr(par = params, fn = J.BipLog.BIN,
-                       gr = Grad.BipLog.BIN,
-                       xt = x, k = k, lambda = L,
-                       method = method,
-                       ctrl = list(type = type))
+    res <- .silently(
+      .run_optimr(par = params, fn = J.BipLog.BIN,
+                  gr = Grad.BipLog.BIN,
+                  xt = x, k = k, lambda = L,
+                  method = method,
+                  ctrl = list(type = type)))
   } else if (method == "MM") {
     if (!is.null(maxit)) {
       res <- sdv_MM(x = x, k = k, iterations = maxit,
@@ -187,10 +188,11 @@ LogBip <- function(x, k = 2, method = "MM", type = NULL, plot = TRUE,
       res <- proj_LogBip(x = x, k = k, random_start = random_start)
     }
   } else {
-    res <- .run_optimr(par = params, fn = J.BipLog.BIN,
-                       gr = Grad.BipLog.BIN,
-                       xt = x, k = k, lambda = L,
-                       method = method)
+    res <- .silently(
+      .run_optimr(par = params, fn = J.BipLog.BIN,
+                  gr = Grad.BipLog.BIN,
+                  xt = x, k = k, lambda = L,
+                  method = method))
   }
 
   if (method %in% c("MM", "PDLB")) {

@@ -41,9 +41,6 @@
 #' # Cross-validation using the MM algorithm
 #' cv_MM <- cv_LogBip(data = x$X, k = 0:5, method = "MM", maxit = 1000)
 #'
-#' # Cross-validation using the Fletcher-Reeves CG algorithm
-#' cv_CG <- cv_LogBip(data = x$X, k = 0:5, method = "CG", type = 1)
-#'
 #' # Cross-validation using the PDLB algorithm
 #' cv_PB <- cv_LogBip(data = x$X, k = 0:5, method = "PDLB", maxit = 1000)
 #' }
@@ -71,12 +68,14 @@ cv_LogBip <- function(data, k = 0:5, K = 7, method = "MM", type = NULL,
 
   for (k in k_seq) {
     if (method == "CG" & k > 0) {
-      bip   <- BiplotML::LogBip(x, k = k, method = method, type = type,
-                                plot = FALSE)
+      bip   <- .silently(
+        BiplotML::LogBip(x, k = k, method = method, type = type,
+                         plot = FALSE))
       thres <- BiplotML::pred_LB(bip, x, ncuts = 50)$thresholds
 
     } else if (method == "BFGS" & k > 0) {
-      bip   <- BiplotML::LogBip(x, k = k, method = method, plot = FALSE)
+      bip   <- .silently(
+        BiplotML::LogBip(x, k = k, method = method, plot = FALSE))
       thres <- BiplotML::pred_LB(bip, x, ncuts = 50)$thresholds
 
     } else if (method == "MM" & k > 0) {
@@ -119,12 +118,22 @@ cv_LogBip <- function(data, k = 0:5, K = 7, method = "MM", type = NULL,
 
     for (i in seq_len(K)) {
       if (method == "CG" & k > 0) {
-        missBip <- BiplotML::LogBip(train[[i]], k = k, method = method,
-                                    type = type, plot = FALSE,
-                                    cv_LogBip = TRUE)
+        missBip <- .silently(
+          BiplotML::LogBip(train[[i]], k = k, method = method,
+                           type = type, plot = FALSE,
+                           cv_LogBip = TRUE))
         P <- fitted_LB(missBip, type = "response")
 
-      } else if (method %in% c("BFGS", "MM", "PDLB") & k > 0) {
+      } else if (method == "BFGS" & k > 0) {
+        missBip <- if (!is.null(maxit)) {
+          .silently(BiplotML::LogBip(train[[i]], k = k, method = method,
+                                     maxit = maxit, plot = FALSE,
+                                     cv_LogBip = TRUE))
+        } else {
+          .silently(BiplotML::LogBip(train[[i]], k = k, method = method,
+                                     plot = FALSE, cv_LogBip = TRUE))
+        }
+      } else if (method %in% c("MM", "PDLB") & k > 0) {
         missBip <- if (!is.null(maxit)) {
           BiplotML::LogBip(train[[i]], k = k, method = method, maxit = maxit,
                            plot = FALSE, cv_LogBip = TRUE)

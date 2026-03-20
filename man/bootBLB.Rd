@@ -16,7 +16,8 @@ bootBLB(
   maxit = NULL,
   resamples = 100,
   conf = 0.9,
-  col.ind = NULL
+  col.ind = NULL,
+  ncores = 1
 )
 }
 \arguments{
@@ -48,6 +49,10 @@ row markers. Default is \code{FALSE}.}
 \item{conf}{Confidence level for the ellipses. Default is \code{0.90}.}
 
 \item{col.ind}{Color for the row markers. Passed to \code{\link{plotBLB}}.}
+
+\item{ncores}{Number of CPU cores for parallel execution. Default \code{1}
+(sequential with progress bar). Set to \code{NULL} to use all available
+cores minus one, or specify an integer \eqn{\geq 2}.}
 }
 \value{
 An object of class \code{BiplotML} (a named list) containing:
@@ -76,13 +81,36 @@ column markers \strong{B} from the resample fit and optimising only over the
 row coordinates. When \code{sup = FALSE}, only the resampled individuals are
 used and Procrustes rotation aligns bootstrap solutions to the full-data
 solution.
+
+Set \code{ncores > 1} to distribute the bootstrap resamples across multiple
+CPU cores. On Windows a PSOCK cluster is used; on Unix/Mac a FORK cluster
+is used instead (lower overhead, faster). Use \code{ncores = NULL} to
+automatically use all available cores minus one.
 }
 \examples{
-\donttest{
+\dontrun{
 data("Methylation")
 set.seed(02052020)
 out_sup  <- bootBLB(x = Methylation, ellipses = FALSE)
 out_boot <- bootBLB(x = Methylation, sup = FALSE, ellipses = TRUE)
+
+# Parallel execution: distribute resamples across multiple CPU cores.
+# Use ncores = NULL to automatically detect available cores minus one,
+# or specify a number explicitly. Parallel mode does not show a progress
+# bar. Results are numerically identical to the sequential mode.
+
+# Check available cores on your machine
+parallel::detectCores()
+
+# Use 4 cores (approx. 4x faster than sequential)
+data("Methylation")
+set.seed(02052020)
+out_par <- bootBLB(x = Methylation, method = "CG", type = 1,
+                   ellipses = TRUE, ncores = 4)
+
+# Use all available cores minus one
+out_par <- bootBLB(x = Methylation, method = "CG", type = 1,
+                   ellipses = TRUE, ncores = NULL)
 }
 }
 \references{

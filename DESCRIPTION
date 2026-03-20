@@ -45,4 +45,3 @@ Suggests:
     mvtnorm
 URL: https://github.com/jgbabativam/BiplotML
 BugReports: https://github.com/jgbabativam/BiplotML/issues
-VignetteBuilder: knitr

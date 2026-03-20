@@ -239,3 +239,24 @@ log_like <- function(x, w = NULL, theta){
     )
   }
 }
+
+# Internal: redirect ALL console output (stdout + messages) to a temp file.
+# Used to suppress the verbose "controls added:" messages printed by optimx
+# when using the CG method. NOTE: never call return() inside the expression
+# passed to .silently() — it would bypass the finally block and leave sinks open.
+.silently <- function(expr) {
+  tmp <- tempfile()
+  con <- file(tmp, open = "wt")
+  sink(con, type = "output",  append = FALSE)
+  sink(con, type = "message", append = TRUE)
+  tryCatch(
+    { result <- force(expr); result },
+    error = function(e) { stop(e) },
+    finally = {
+      try(sink(type = "output"),  silent = TRUE)
+      try(sink(type = "message"), silent = TRUE)
+      try(close(con),             silent = TRUE)
+      try(unlink(tmp),            silent = TRUE)
+    }
+  )
+}

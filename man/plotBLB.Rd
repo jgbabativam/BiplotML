@@ -12,6 +12,7 @@ plotBLB(
   label.ind = FALSE,
   draw = c("biplot", "ind", "var"),
   titles = NULL,
+  subtitle = NULL,
   ellipses = FALSE,
   endsegm = 0.75,
   repel = FALSE,
@@ -37,7 +38,10 @@ is \code{FALSE}.}
 columns, \code{"ind"} for individuals only, or \code{"var"} for variables
 only.}
 
-\item{titles}{Title for the plot. Default is \code{NULL} (no title).}
+\item{titles}{Main title for the plot. Default is \code{NULL} (no title).}
+
+\item{subtitle}{Subtitle for the plot, typically the algorithm name. Default
+is \code{NULL}.}
 
 \item{ellipses}{Logical; if \code{TRUE}, confidence ellipses are drawn around
 the row markers (requires a bootstrap fit from \code{\link{bootBLB}}).
@@ -51,7 +55,7 @@ using \pkg{ggrepel}. Default is \code{FALSE}.}
 
 \item{xylim}{Numeric vector of length 2 specifying the common range of both
 axes, e.g. \code{c(-10, 10)}. If \code{NULL} (default), the range is
-determined automatically.}
+determined automatically from all plotted elements including ellipses.}
 }
 \value{
 A \code{ggplot2} object.
@@ -72,13 +76,8 @@ present for that individual.
 \donttest{
 data("Methylation")
 set.seed(123456)
-outBLB <- bootBLB(x = Methylation, sup = TRUE, plot = FALSE)
-plotBLB(x = outBLB, titles = "Methylation Logistic Biplot",
-        ellipses = FALSE)
-plotBLB(x = outBLB, titles = "Methylation Logistic Biplot",
-        endsegm = 0.95)
-plotBLB(x = outBLB, label.ind = TRUE,
-        titles = "Methylation Logistic Biplot")
+res <- LogBip(x = Methylation, method = "MM", maxit = 1000, plot = FALSE)
+plotBLB(x = res, titles = "Methylation Logistic Biplot", endsegm = 0.95)
 }
 }
 \references{

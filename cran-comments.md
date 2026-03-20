@@ -17,7 +17,7 @@ All changes are described in NEWS.md.
 **`badhess.txt` (resolved):** `optimx` writes this file to the working
 directory when it encounters an indefinite Hessian during CG optimization.
 It has been suppressed by routing all `optimr()` and `optimx()` calls through
-an internal wrapper (`.run_optimr()`) that changes to `tempdir()` before the
+an internal wrapper (`.run\_optimr()`) that changes to `tempdir()` before the
 call and explicitly deletes `badhess.txt` from both `tempdir()` and the
 original working directory in an `on.exit()` handler.
 
@@ -30,3 +30,4 @@ in the built package.
 
 **`optimr` dependency (resolved):** The `optimr` package was removed from CRAN
 on 2023-10-29. All calls now use `optimx::optimr()`.
+

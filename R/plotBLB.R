@@ -1,3 +1,5 @@
+#' @importFrom stats IQR
+#'
 #' @export
 #' @title Plot a Binary Logistic Biplot
 #' @description
@@ -26,7 +28,9 @@
 #' @param draw Which graph to draw: \code{"biplot"} (default) for both rows and
 #'   columns, \code{"ind"} for individuals only, or \code{"var"} for variables
 #'   only.
-#' @param titles Title for the plot. Default is \code{NULL} (no title).
+#' @param titles Main title for the plot. Default is \code{NULL} (no title).
+#' @param subtitle Subtitle for the plot, typically the algorithm name. Default
+#'   is \code{NULL}.
 #' @param ellipses Logical; if \code{TRUE}, confidence ellipses are drawn around
 #'   the row markers (requires a bootstrap fit from \code{\link{bootBLB}}).
 #'   Default is \code{FALSE}.
@@ -36,7 +40,7 @@
 #'   using \pkg{ggrepel}. Default is \code{FALSE}.
 #' @param xylim Numeric vector of length 2 specifying the common range of both
 #'   axes, e.g. \code{c(-10, 10)}. If \code{NULL} (default), the range is
-#'   determined automatically.
+#'   determined automatically from all plotted elements including ellipses.
 #'
 #' @return A \code{ggplot2} object.
 #'
@@ -55,20 +59,18 @@
 #' \donttest{
 #' data("Methylation")
 #' set.seed(123456)
-#' outBLB <- bootBLB(x = Methylation, sup = TRUE, plot = FALSE)
-#' plotBLB(x = outBLB, titles = "Methylation Logistic Biplot",
-#'         ellipses = FALSE)
-#' plotBLB(x = outBLB, titles = "Methylation Logistic Biplot",
-#'         endsegm = 0.95)
-#' plotBLB(x = outBLB, label.ind = TRUE,
-#'         titles = "Methylation Logistic Biplot")
+#' res <- LogBip(x = Methylation, method = "MM", maxit = 1000, plot = FALSE)
+#' plotBLB(x = res, titles = "Methylation Logistic Biplot", endsegm = 0.95)
 #' }
+
+
 
 plotBLB <- function(x, dim = c(1, 2), col.ind = NULL, col.var = "#0E185F",
                     label.ind = FALSE,
-                    draw    = c("biplot", "ind", "var"),
-                    titles  = NULL, ellipses = FALSE,
-                    endsegm = 0.75, repel = FALSE, xylim = NULL) {
+                    draw     = c("biplot", "ind", "var"),
+                    titles   = NULL, subtitle = NULL,
+                    ellipses = FALSE,
+                    endsegm  = 0.75, repel = FALSE, xylim = NULL) {
 
   for (pkg in c("ggplot2", "dplyr")) {
     if (!requireNamespace(pkg, quietly = TRUE)) {
@@ -106,17 +108,46 @@ plotBLB <- function(x, dim = c(1, 2), col.ind = NULL, col.var = "#0E185F",
   EspA[["label"]] <- rownames(EspA)
   EspB[["label"]] <- rownames(EspB)
 
+  # Compute axis limits including ellipse coordinates if present,
+  # then clip extreme ellipse outliers to 3 * IQR beyond the main data range
+  # to prevent a few runaway ellipses from collapsing the rest of the plot.
   if (!is.null(xylim)) {
     lims <- xylim
   } else {
-    all_vals <- c(EspA[[d1]], EspA[[d2]],
-                  EspB[["x.50"]],  EspB[["y.50"]],
-                  EspB[["x.end"]], EspB[["y.end"]])
-    margin <- diff(range(all_vals)) * 0.05
-    lims   <- range(all_vals) + c(-margin, margin)
+    core_vals <- c(EspA[[d1]], EspA[[d2]],
+                   EspB[["x.50"]],  EspB[["y.50"]],
+                   EspB[["x.end"]], EspB[["y.end"]])
+    core_range <- range(core_vals, na.rm = TRUE)
+    iqr_val    <- IQR(core_vals, na.rm = TRUE)
+    # Allow ellipses to extend up to 3 IQR beyond the core range
+    expand     <- max(3 * iqr_val, diff(core_range) * 0.15)
+    lims       <- core_range + c(-expand, expand)
+
+    # If ellipses are being drawn, include their coords but cap at the
+    # expanded limits so outlier ellipses do not blow up the scale
+    if (ellipses && !is.null(x$Ellip)) {
+      ellip_vals <- c(x$Ellip[[d1]], x$Ellip[[d2]])
+      ellip_range <- range(ellip_vals, na.rm = TRUE)
+      lims[1] <- max(lims[1], ellip_range[1])
+      lims[2] <- min(lims[2], ellip_range[2])
+      # Safety: ensure lims[1] < lims[2]
+      if (lims[1] >= lims[2]) lims <- core_range + c(-expand, expand)
+    }
+    margin <- diff(lims) * 0.04
+    lims   <- lims + c(-margin, margin)
   }
 
   col_ind <- if (is.null(col.ind)) "#444444" else col.ind
+
+  # Build title: use subtitle if provided, else fall back to x$method
+  auto_subtitle <- if (!is.null(subtitle)) subtitle else x$method
+  plot_title    <- if (!is.null(auto_subtitle) && !is.null(titles)) {
+    paste0(titles, "\n", auto_subtitle)
+  } else if (!is.null(titles)) {
+    titles
+  } else {
+    auto_subtitle
+  }
 
   # Base plot
   p_base <- ggplot2::ggplot() +
@@ -126,9 +157,22 @@ plotBLB <- function(x, dim = c(1, 2), col.ind = NULL, col.var = "#0E185F",
                         color = "grey60") +
     ggplot2::geom_vline(xintercept = 0, linetype = "dashed",
                         color = "grey60") +
-    ggplot2::labs(title = titles,
+    ggplot2::labs(title    = plot_title,
                   x = paste0("Dimension ", dim[1]),
-                  y = paste0("Dimension ", dim[2]))
+                  y = paste0("Dimension ", dim[2])) +
+    ggplot2::theme(plot.title = ggplot2::element_text(
+      hjust = 0.5, size = 11, face = "bold"))
+
+  # Confidence ellipses (drawn FIRST so they appear behind the points)
+  if (ellipses && !is.null(x$Ellip)) {
+    Ellip_data <- x$Ellip
+    p_base <- p_base +
+      ggplot2::geom_path(
+        data = Ellip_data,
+        ggplot2::aes(x = .data[[d1]], y = .data[[d2]],
+                     group = .data[["ind"]]),
+        color = col_ind, linewidth = 0.3, alpha = 0.5)
+  }
 
   # Row markers
   if (grap %in% c("ind", "biplot")) {
@@ -154,17 +198,6 @@ plotBLB <- function(x, dim = c(1, 2), col.ind = NULL, col.var = "#0E185F",
             size = 3, color = col_ind, vjust = -0.5)
       }
     }
-  }
-
-  # Confidence ellipses
-  if (ellipses && !is.null(x$Ellip)) {
-    Ellip_data <- x$Ellip
-    p_base <- p_base +
-      ggplot2::geom_path(
-        data = Ellip_data,
-        ggplot2::aes(x = .data[[d1]], y = .data[[d2]],
-                     group = .data[["ind"]]),
-        color = col_ind, linewidth = 0.3)
   }
 
   # Variable arrows

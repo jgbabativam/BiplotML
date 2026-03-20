@@ -54,7 +54,7 @@ out <- proj_LogBip(x = x_miss, k = 2, max_iters = 1000)
 }
 }
 \references{
-Babativa-Marquez, J. G., & Vicente-Villardon, J. L. (2022). Logistic biplot
+Babativa-Marquez, J. G., & Vicente-Villardon, J. L. (2026). Logistic biplot
 with missing data. \emph{In process}.
 
 Babativa-Marquez, J. G., & Vicente-Villardon, J. L. (2021). Logistic biplot

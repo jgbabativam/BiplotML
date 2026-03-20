@@ -49,9 +49,6 @@ x <- simBin(n = 100, p = 50, k = 3, D = 0.5, C = 20)
 # Cross-validation using the MM algorithm
 cv_MM <- cv_LogBip(data = x$X, k = 0:5, method = "MM", maxit = 1000)
 
-# Cross-validation using the Fletcher-Reeves CG algorithm
-cv_CG <- cv_LogBip(data = x$X, k = 0:5, method = "CG", type = 1)
-
 # Cross-validation using the PDLB algorithm
 cv_PB <- cv_LogBip(data = x$X, k = 0:5, method = "PDLB", maxit = 1000)
 }
