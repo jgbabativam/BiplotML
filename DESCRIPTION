@@ -1,7 +1,7 @@
 Package: BiplotML
 Title: Logistic Biplot Estimation Using Machine Learning Algorithms
 Version: 1.1.1
-Date: 2026-03-17
+Date: 2026-04-30
 Authors@R:
     person(given = "Jose Giovany",
            family = "Babativa-Marquez",
